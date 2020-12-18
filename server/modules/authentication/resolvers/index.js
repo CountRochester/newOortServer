@@ -19,9 +19,9 @@ import Mutations from './mutations.js'
 import Subscription from './subscriptions.js'
 
 
-export default (dbModel, moment) => ({
-  Query: Query(dbModel),
-  Mutation: Mutations(dbModel, moment),
+export default (context, dbModel) => ({
+  Query: Query(context, dbModel),
+  Mutation: Mutations(context, dbModel),
   Subscription
 })
 

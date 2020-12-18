@@ -26,6 +26,8 @@ export class ApplicationModule {
   constructor() {
     this.dbModel = null
     this.dBlink = null
+    this.context = {}
+    this.publicModuleData = {}
 
     this.schema = ''
     this.resolvers = {

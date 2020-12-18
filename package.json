@@ -31,9 +31,11 @@
     "pg": "^8.5.1",
     "sequelize": "^6.3.5",
     "subscriptions-transport-ws": "^0.9.18",
-    "uuid": "^8.3.1"
+    "uuid": "^8.3.1",
+    "vuetify": "^2.3.20"
   },
   "devDependencies": {
+    "babel-eslint": "^10.1.0",
     "eslint": "^7.15.0",
     "eslint-plugin-vue": "^7.2.0"
   }

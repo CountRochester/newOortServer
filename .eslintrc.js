@@ -8,6 +8,7 @@ module.exports = {
         "eslint:recommended",
         "plugin:vue/essential"
     ],
+    "parser": "babel-eslint",
     "parserOptions": {
         "ecmaVersion": 12,
         "sourceType": "module"

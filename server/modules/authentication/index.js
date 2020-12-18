@@ -1,5 +1,5 @@
 import consola from 'consola'
-import moment from 'moment'
+// import moment from 'moment'
 
 import { ApplicationModule } from '../common.js'
 import authDB from './db/auth-db.js'
@@ -8,7 +8,7 @@ import { buildAuthModel } from './model/index.js'
 import schema from './schema/index.js'
 import Resolvers from './resolvers/index.js'
 
-moment.locale('ru')
+// moment.locale('ru')
 
 export class AuthenticationModule extends ApplicationModule{
   
@@ -19,7 +19,9 @@ export class AuthenticationModule extends ApplicationModule{
     this.schema = schema
   }
 
-  async init (options) {
+  async init (context, options) {
+    this.context = context
+
     try {
       await authDB.init(options)
       this.dBlink = authDB.link
@@ -30,7 +32,12 @@ export class AuthenticationModule extends ApplicationModule{
 
       await authDB.userInit(this.dbModel)
 
-      this.resolvers = Resolvers(this.dbModel, moment)
+      this.resolvers = Resolvers(this.context, this.dbModel)
+
+      this.publicModuleData = {
+        model: this.dbModel
+      }
+
     } catch (err) {
       console.log(err)
       throw err

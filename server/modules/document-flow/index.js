@@ -11,7 +11,9 @@ export class DocumentFlowModule extends ApplicationModule {
     super()
   }
 
-  async init (options) {
+  async init (context, options) {
+    this.context = context
+    
     try {
       await docsDB.init(options)
       this.dBlink = docsDB.link
@@ -20,6 +22,9 @@ export class DocumentFlowModule extends ApplicationModule {
       this.dbModel = buildDocsModel(this.dBlink)
       consola.success('Модель БД аутентификации успешно инициализирована.')
 
+      this.publicModuleData = {
+        model: this.dbModel
+      }
     } catch (err) {
       console.log(err)
       throw err
