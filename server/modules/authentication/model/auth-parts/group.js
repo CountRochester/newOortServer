@@ -20,3 +20,5 @@ const groupModel = (Sequelize) => ({
 })
 
 export const buildGroupModel = buildModel('Group', groupModel)
+
+export default buildGroupModel

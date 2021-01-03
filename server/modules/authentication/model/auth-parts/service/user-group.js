@@ -10,3 +10,5 @@ const userGroupModel = (Sequelize) => ({
 })
 
 export const buildUserGroupModel = buildModel('userGroup', userGroupModel)
+
+export default buildUserGroupModel

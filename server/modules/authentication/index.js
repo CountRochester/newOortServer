@@ -1,5 +1,6 @@
 import consola from 'consola'
 // import moment from 'moment'
+import bcrypt from 'bcrypt'
 
 import { ApplicationModule } from '../common.js'
 import authDB from './db/auth-db.js'
@@ -10,14 +11,16 @@ import Resolvers from './resolvers/index.js'
 
 // moment.locale('ru')
 
-export class AuthenticationModule extends ApplicationModule{
-  
-  static get moduleName() { return 'authentication' }
-  
-  constructor() {
+export class AuthenticationModule extends ApplicationModule {
+  constructor () {
     super()
     this.schema = schema
+    this.class = AuthenticationModule
   }
+
+  static get moduleName () { return 'authentication' }
+
+  get moduleName () { return this.class.moduleName }
 
   async init (context, options) {
     this.context = context
@@ -30,18 +33,43 @@ export class AuthenticationModule extends ApplicationModule{
       this.dbModel = buildAuthModel(this.dBlink)
       consola.success('Модель БД аутентификации успешно инициализирована.')
 
-      await authDB.userInit(this.dbModel)
+      if (options.isMaster) {
+        await this.userInit()
+      }
 
       this.resolvers = Resolvers(this.context, this.dbModel)
 
       this.publicModuleData = {
         model: this.dbModel
       }
-
     } catch (err) {
-      console.log(err)
+      consola.error(err)
       throw err
+    }
+  }
+
+  async userInit () {
+    try {
+      const users = await this.dbModel.User.findAll() || {}
+      if (!users.length) {
+        const salt = await bcrypt.genSalt(10)
+        const initGroup = await this.dbModel.Group.create({
+          name: 'Администратор',
+          permissions: 255
+        })
+        const initUser = await this.dbModel.User.create({
+          name: 'administrator',
+          password: await bcrypt.hash('administrator', salt)
+        })
+        await initUser.setGroups([initGroup])
+        consola.info('Инициирующий пользователь успешно создан')
+      } else {
+        consola.info('Пользователи уже существуют')
+      }
+    } catch (err) {
+      throw new Error(`Ошибка создания инициирующего пользователя: ${err}`)
     }
   }
 }
 
+export default AuthenticationModule

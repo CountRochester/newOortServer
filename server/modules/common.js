@@ -1,6 +1,8 @@
 import gqlSubscriptions from 'graphql-subscriptions'
+
 const { PubSub } = gqlSubscriptions
 
+// eslint-disable-next-line max-len
 export const buildModel = (modelName, modelFun) => (dBLink, Sequelize) => dBLink.define(modelName, modelFun(Sequelize))
 
 export const pubsub = (function () {
@@ -19,11 +21,12 @@ export const pubsub = (function () {
 })()
 
 export class ApplicationModule {
-  static get moduleName() { 
+  // eslint-disable-next-line class-methods-use-this
+  get moduleName () {
     throw new Error('Method not emplemented')
   }
-  
-  constructor() {
+
+  constructor () {
     this.dbModel = null
     this.dBlink = null
     this.context = {}
@@ -37,7 +40,15 @@ export class ApplicationModule {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this, require-await
   async init () {
-   throw new Error('Method not emplemented')
+    throw new Error('Method not emplemented')
   }
+}
+
+export function reduceArrayByKey (arr, key, toSting) {
+  if (toSting) {
+    return arr.reduce((acc, item) => [...acc, item[key].toSting()], [])
+  }
+  return arr.reduce((acc, item) => [...acc, item[key]], [])
 }

@@ -4,7 +4,9 @@
   "description": "",
   "main": "server/index.js",
   "scripts": {
-    "dev": "node server/index.js"
+    "start": "cross-env NODE_ENV=development node server/index.js",
+    "build": "cross-env NODE_ENV=development nuxt",
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server"
   },
   "type": "module",
   "author": "",
@@ -13,8 +15,8 @@
     "apollo-server-fastify": "^2.19.0",
     "bcrypt": "^5.0.0",
     "consola": "^2.15.0",
+    "cross-env": "^7.0.3",
     "fastify": "^3.9.1",
-    "fastify-circuit-breaker": "^1.0.1",
     "fastify-cookie": "^4.1.0",
     "fastify-multer": "^2.0.2",
     "fastify-session": "^5.2.1",
@@ -36,7 +38,13 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
+    "@nuxtjs/eslint-config": "^3.1.0",
+    "@nuxtjs/eslint-module": "^2.0.0",
     "eslint": "^7.15.0",
-    "eslint-plugin-vue": "^7.2.0"
+    "eslint-plugin-vue": "^7.2.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-nuxt": "^1.0.0",
+    "nodemon": "^2.0.6"
   }
 }

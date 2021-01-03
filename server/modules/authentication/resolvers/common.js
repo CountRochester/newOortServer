@@ -1,331 +1,192 @@
-import fs from 'fs'
+import fs from 'fs/promises'
 import path from 'path'
 
-import keys from '../../../keys'
+import keys from '../../../keys/index.js'
+import { reduceArrayByKey } from '../../common.js'
 
-
-export default (context, Auth) => {
-  const { Op, documentFlow } = context
-  const Docs = documentFlow.model
-
+function getValidatedEmployee (employee = {}) {
   return {
-    async getUsers(id) {
-      const functionFind = id ? 'findOne' : 'findAll'
-      const where = id ? { where: { id } } : {}
-      const users = await Auth.User[functionFind]({
-        attributes: [
-          'id',
-          'name',
-          'employeeId',
-          'avatar',
-          'createdAt',
-          'updatedAt'
-        ],
-        include: [
-          {
-            model: Auth.Group,
-            attributes: [
-              'id'
-            ],
-            through: {
-              attributes: []
-            }
-          }
-        ],
-        ...where
-      })
-      return users
-    },
-    formUser(item, employees) {
-      const groupsId = item.Groups.reduce((acc, item) => [...acc, item.id.toString()], [])
-      const employee = employees[item.employeeId] || {}
-      return {
-        id: item.id,
-        name: item.name,
-        employeeId: item.employeeId,
-        firstName: employee?.firstName || '',
-        middleName: employee?.middleName || '',
-        secondName: employee?.secondName || '',
-        currentPositionsId: employee?.currentPositionsId || [],
-        departmentsId: employee?.departmentsId || [],
-        subdivisionsId: employee?.subdivisionsId || [],
-        groupsId,
-        avatar: item.avatar,
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt
-      }
-    },
-    async formEmployees(ids) {
-      const employees = await this.getEmployees(ids)
-      const employeesIndexed = []
-      employees.forEach((el) => {
-        let subdivisionsId = []
-        const departmentsId = []
-        const currentPositionsId = []
-        el.CurrentPositions.forEach((el) => {
-          currentPositionsId.push(el.id)
-          const currentSubdivId = el.Subdivisions.reduce((acc, item) => [...acc, item.id.toString()], [])
-          subdivisionsId = [...subdivisionsId, ...currentSubdivId]
-          departmentsId.push(el.Department.id)
-        })
-        employeesIndexed[el.id] = {
-          id: el.id,
-          firstName: el.firstName,
-          middleName: el.middleName,
-          secondName: el.secondName,
-          currentPositionsId,
-          subdivisionsId,
-          departmentsId
-        }
-      })
-      return employeesIndexed
-    },
-    async getEmployees (ids) {
-      if (!ids) { return }
-      console.time('getEmployees')
-      const employee = await Docs.Employee.findAll({
-        where: {
-          id: { [Op.in]: ids }
-        },
-        attributes: [
-          'id',
-          'firstName',
-          'middleName',
-          'secondName'
-        ],
-        include: [
-          {
-            model: Docs.CurrentPosition,
-            attributes: ['id'],
-            include: [
-              {
-                model: Docs.Subdivision,
-                attributes: ['id']
-              },
-              {
-                model: Docs.Department,
-                attributes: ['id']
-              }
-            ]
-          }
-        ]
-      })
-      console.timeEnd('getEmployees')
-      if (!employee) { return }
-      return employee
-    },
-    async addAvatar (avatar, userName){
-      const filename = avatar.split('.')
-      const message = { messageType: 'success' }
-      let fileExtention
-      if (filename.length > 1) {
-        fileExtention = filename[filename.length - 1]
-      } else {
-        fileExtention = ''
-      }
-      let moveOK = true
-      const newFileName = `avatar-${userName}.${fileExtention}`
-      await fs.rename(path.join(keys.STATIC_DIR, keys.UPLOAD_STORAGE, avatar),
-        path.join(keys.STATIC_DIR, keys.AVATAR_STORAGE, newFileName),
-        (err) => {
-          if (err) {
-            message.text += `Ошибка при прикреплении файла ${avatar}: ${err}`
-            message.messageType = 'error'
-            moveOK = false
-          }
-        })
-      if (moveOK) {
-        message.text += `Прикрепление файла ${avatar} успешно \n\r`
-        message.avatar = newFileName
-      }
-      return message
-    },
-    async deleteAvatarUpoad (fileName){
-      const message = {}
-      await fs.unlink(path.join(keys.STATIC_DIR, keys.UPLOAD_STORAGE, fileName), (err) => {
-        if (err) {
-          message.text += `Файл ${fileName}, ошибка: ${err}\n\r`
-          message.messageType = 'error'
-        }
-      })
-      return message
-    },
-    async deleteAvatar (avatar){
-      const message = {}
-      await fs.unlink(path.join(keys.STATIC_DIR, keys.AVATAR_STORAGE, avatar), async (err) => {
-        if (err) {
-          const uplMess = await deleteAvatarUpoad(avatar)
-          if (uplMess.messageType === 'error') {
-            message.text = uplMess.text
-            message.messageType = uplMess.messageType
-          }
-        } else {
-          message.text = `Файл ${avatar} успешно удалён`
-        }
-      })
-      return message
-    }
+    firstName: employee?.firstName || '',
+    middleName: employee?.middleName || '',
+    secondName: employee?.secondName || '',
+    currentPositionsId: employee?.currentPositionsId || [],
+    departmentsId: employee?.departmentsId || [],
+    subdivisionsId: employee?.subdivisionsId || [],
   }
 }
-// export const getUsers = async (id) => {
-//   const functionFind = id ? 'findOne' : 'findAll'
-//   const where = id ? { where: { id } } : {}
-//   const users = await Auth.User[functionFind]({
-//     attributes: [
-//       'id',
-//       'name',
-//       'employeeId',
-//       'avatar',
-//       'createdAt',
-//       'updatedAt'
-//     ],
-//     include: [
-//       {
-//         model: Auth.Group,
-//         attributes: [
-//           'id'
-//         ],
-//         through: {
-//           attributes: []
-//         }
-//       }
-//     ],
-//     ...where
-//   })
-//   return users
-// }
 
-// export const formEmployees = async (ids) => {
-//   const employees = await getEmployees(ids)
-//   const employeesIndexed = []
-//   employees.forEach((el) => {
-//     let subdivisionsId = []
-//     const departmentsId = []
-//     const currentPositionsId = []
-//     el.CurrentPositions.forEach((el) => {
-//       currentPositionsId.push(el.id)
-//       const currentSubdivId = el.Subdivisions.reduce((acc, item) => [...acc, item.id.toString()], [])
-//       subdivisionsId = [...subdivisionsId, ...currentSubdivId]
-//       departmentsId.push(el.Department.id)
-//     })
-//     employeesIndexed[el.id] = {
-//       id: el.id,
-//       firstName: el.firstName,
-//       middleName: el.middleName,
-//       secondName: el.secondName,
-//       currentPositionsId,
-//       subdivisionsId,
-//       departmentsId
-//     }
-//   })
-//   return employeesIndexed
-// }
+async function moveAvatarFileFromUpload (avatar, newFileName) {
+  const fromPath = path.join(keys.STATIC_DIR, keys.UPLOAD_STORAGE, avatar)
+  const toPath = path.join(keys.STATIC_DIR, keys.AVATAR_STORAGE, newFileName)
+  await fs.rename(fromPath, toPath)
+}
 
-// export const getEmployees = async (ids) => {
-//   if (!ids) { return }
-//   console.time('getEmployees')
-//   const employee = await Docs.Employee.findAll({
-//     where: {
-//       id: { [Op.in]: ids }
-//     },
-//     attributes: [
-//       'id',
-//       'firstName',
-//       'middleName',
-//       'secondName'
-//     ],
-//     include: [
-//       {
-//         model: Docs.CurrentPosition,
-//         attributes: ['id'],
-//         include: [
-//           {
-//             model: Docs.Subdivision,
-//             attributes: ['id']
-//           },
-//           {
-//             model: Docs.Department,
-//             attributes: ['id']
-//           }
-//         ]
-//       }
-//     ]
-//   })
-//   console.timeEnd('getEmployees')
-//   if (!employee) { return }
-//   return employee
-// }
+export default (context, Auth) => {
+  const { Op } = context
+  const Docs = () => context.documentFlow.model
 
-// export const formUser = (item, employees) => {
-//   const groupsId = item.Groups.reduce((acc, item) => [...acc, item.id.toString()], [])
-//   const employee = employees[item.employeeId] || {}
-//   return {
-//     id: item.id,
-//     name: item.name,
-//     employeeId: item.employeeId,
-//     firstName: employee?.firstName || '',
-//     middleName: employee?.middleName || '',
-//     secondName: employee?.secondName || '',
-//     currentPositionsId: employee?.currentPositionsId || [],
-//     departmentsId: employee?.departmentsId || [],
-//     subdivisionsId: employee?.subdivisionsId || [],
-//     groupsId,
-//     avatar: item.avatar,
-//     createdAt: moment(item.createdAt),
-//     updatedAt: moment(item.updatedAt)
-//   }
-// }
+  const common = {}
+  common.getUsers = async (id) => {
+    const functionFind = id ? 'findOne' : 'findAll'
+    const where = id ? { where: { id } } : {}
+    const users = await Auth.User[functionFind]({
+      attributes: [
+        'id',
+        'name',
+        'employeeId',
+        'avatar',
+        'createdAt',
+        'updatedAt'
+      ],
+      include: [
+        {
+          model: Auth.Group,
+          attributes: [
+            'id'
+          ],
+          through: {
+            attributes: []
+          }
+        }
+      ],
+      ...where
+    })
+    return users
+  }
 
-// export const addAvatar = async (avatar, userName) => {
-//   const filename = avatar.split('.')
-//   const message = { messageType: 'success' }
-//   let fileExtention
-//   if (filename.length > 1) {
-//     fileExtention = filename[filename.length - 1]
-//   } else {
-//     fileExtention = ''
-//   }
-//   let moveOK = true
-//   const newFileName = `avatar-${userName}.${fileExtention}`
-//   await fs.rename(path.join(keys.STATIC_DIR, keys.UPLOAD_STORAGE, avatar),
-//     path.join(keys.STATIC_DIR, keys.AVATAR_STORAGE, newFileName),
-//     (err) => {
-//       if (err) {
-//         message.text += `Ошибка при прикреплении файла ${avatar}: ${err}`
-//         message.messageType = 'error'
-//         moveOK = false
-//       }
-//     })
-//   if (moveOK) {
-//     message.text += `Прикрепление файла ${avatar} успешно \n\r`
-//     message.avatar = newFileName
-//   }
-//   return message
-// }
+  common.formUser = (item, employees) => {
+    const groupsId = reduceArrayByKey(item.Groups, 'id', true)
+    const employee = getValidatedEmployee(employees[item.employeeId])
+    return {
+      id: item.id,
+      name: item.name,
+      employeeId: item.employeeId,
+      firstName: employee.firstName,
+      middleName: employee.middleName,
+      secondName: employee.secondName,
+      currentPositionsId: employee.currentPositionsId,
+      departmentsId: employee.departmentsId,
+      subdivisionsId: employee.subdivisionsId,
+      groupsId,
+      avatar: item.avatar,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt
+    }
+  }
 
-// export const deleteAvatarUpoad = async (fileName) => {
-//   const message = {}
-//   await fs.unlink(path.join(keys.STATIC_DIR, keys.UPLOAD_STORAGE, fileName), (err) => {
-//     if (err) {
-//       message.text += `Файл ${fileName}, ошибка: ${err}\n\r`
-//       message.messageType = 'error'
-//     }
-//   })
-//   return message
-// }
+  common.formEmployees = async (ids) => {
+    const employees = await common.getEmployees(ids)
+    const employeesIndexed = []
+    employees.forEach((el) => {
+      let subdivisionsId = []
+      const departmentsId = []
+      const currentPositionsId = []
 
-// export const deleteAvatar = async (avatar) => {
-//   const message = {}
-//   await fs.unlink(path.join(keys.STATIC_DIR, keys.AVATAR_STORAGE, avatar), async (err) => {
-//     if (err) {
-//       const uplMess = await deleteAvatarUpoad(avatar)
-//       if (uplMess.messageType === 'error') {
-//         message.text = uplMess.text
-//         message.messageType = uplMess.messageType
-//       }
-//     } else {
-//       message.text = `Файл ${avatar} успешно удалён`
-//     }
-//   })
-//   return message
-// }
+      const formDepsAndCurPos = (element) => {
+        currentPositionsId.push(element.id)
+        const currentSubdivId = reduceArrayByKey(element.Subdivisions, 'id', true)
+        subdivisionsId = [...subdivisionsId, ...currentSubdivId]
+        departmentsId.push(element.Department.id)
+      }
+      el.CurrentPositions.forEach(formDepsAndCurPos)
+
+      employeesIndexed[el.id] = {
+        id: el.id,
+        firstName: el.firstName,
+        middleName: el.middleName,
+        secondName: el.secondName,
+        currentPositionsId,
+        subdivisionsId,
+        departmentsId
+      }
+    })
+    return employeesIndexed
+  }
+
+  common.getEmployees = async (ids) => {
+    if (!ids) { return false }
+    // console.time('getEmployees')
+    const employees = await Docs().Employee.findAll({
+      where: {
+        id: { [Op.in]: ids }
+      },
+      attributes: [
+        'id',
+        'firstName',
+        'middleName',
+        'secondName'
+      ],
+      include: [
+        {
+          model: Docs().CurrentPosition,
+          attributes: ['id'],
+          include: [
+            {
+              model: Docs().Subdivision,
+              attributes: ['id']
+            },
+            {
+              model: Docs().Department,
+              attributes: ['id']
+            }
+          ]
+        }
+      ]
+    })
+    // console.timeEnd('getEmployees')
+    if (!employees) { return false }
+    return employees
+  }
+
+  common.addAvatar = async (avatar, userName) => {
+    const message = { messageType: 'success' }
+    const fileExtention = path.extname(avatar)
+    const newFileName = `avatar-${userName}.${fileExtention}`
+
+    try {
+      await moveAvatarFileFromUpload(avatar, newFileName)
+      message.text += `Прикрепление файла ${avatar} успешно \n\r`
+      message.avatar = newFileName
+    } catch (err) {
+      message.text += `Ошибка при прикреплении файла ${avatar}: ${err}`
+      message.messageType = 'error'
+    }
+
+    return message
+  }
+
+  common.deleteAvatarUpoad = async (fileName) => {
+    const message = {}
+    try {
+      await fs.unlink(path.join(keys.STATIC_DIR, keys.UPLOAD_STORAGE, fileName))
+    } catch (err) {
+      message.text += `Файл ${fileName}, ошибка: ${err}\n\r`
+      message.messageType = 'error'
+    }
+    return message
+  }
+
+  common.deleteAvatar = async (avatar) => {
+    const message = {}
+    try {
+      await fs.unlink(path.join(keys.STATIC_DIR, keys.AVATAR_STORAGE, avatar))
+      message.text = `Файл ${avatar} успешно удалён`
+    } catch (err) {
+      const uplMess = await common.deleteAvatarUpoad(avatar)
+      if (uplMess.messageType === 'error') {
+        message.text = uplMess.text
+        message.messageType = uplMess.messageType
+      }
+    }
+    return message
+  }
+
+  common.getUserById = async (id) => {
+    const rawUser = await common.getUsers(id)
+    const employees = await common.formEmployees([rawUser.employeeId])
+    const user = common.formUser(rawUser, employees)
+    return user
+  }
+
+  return common
+}

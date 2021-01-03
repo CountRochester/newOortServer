@@ -64,9 +64,9 @@ export default `
     login(user: UserInput!): AuthMessage!
     addGroup(group: GroupInput!): Message!
     editGroup(id: ID! group: GroupInput!): Message!
-    assignUsersToGroup(userId: [ID]! groupId: ID!): Message!
-    assignUserToGroups(userId: ID! groupId: [ID]!): Message!
-    removeUsersFromGroup(userId: [ID]! groupId: ID!): Message!
+    assignUsersToGroup(userIds: [ID]! groupId: ID!): Message!
+    assignUserToGroups(userId: ID! groupIds: [ID]!): Message!
+    removeUsersFromGroup(userIds: [ID]! groupId: ID!): Message!
     removeUserFromAllGroups(id: ID!): Message!
     deleteGroup(id: ID!): Message!
     deleteUploadedFiles(files: [String]!): Message!

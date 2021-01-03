@@ -27,3 +27,5 @@ const userModel = (Sequelize) => ({
 })
 
 export const buildUserModel = buildModel('User', userModel)
+
+export default buildUserModel

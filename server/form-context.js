@@ -7,7 +7,7 @@ const { PubSub } = gqlSubscriptions
 
 moment.locale('ru')
 
-export function formContext() {
+export function formContext () {
   return {
     moment,
     pubsub: new PubSub(),
@@ -15,3 +15,4 @@ export function formContext() {
     Op: Sequelize.Op
   }
 }
+export default formContext

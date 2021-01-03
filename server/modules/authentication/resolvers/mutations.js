@@ -4,258 +4,326 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 import common from './common.js'
-
-// import { pubsub } from '../../common.js'
 import keys from '../../../keys/index.js'
+import { reduceArrayByKey } from '../../common.js'
+
+function getNameAndPassword (name, password) {
+  const iName = getValidName(name)
+  const iPassword = getValidPassword(password)
+  if (!iName || !iPassword) {
+    throw new Error('Имя пользователя и пароль не должны быть пустыми')
+  }
+  return { iName, iPassword }
+}
+
+function getValidName (name) {
+  return name.trim().replace(/[\[\]&{}<>#$%^*!@+\/\\`~]+/g, '')
+}
+
+function getValidPassword (password) {
+  return password.trim().replace(/[\'\"\[\ \~]+/g, '')
+}
+
+async function getEncryptedPassword (password) {
+  const salt = await bcrypt.genSalt(10)
+  const encryptedPassword = await bcrypt.hash(password, salt)
+  return encryptedPassword
+}
+
+async function checkCandidate (name, Auth) {
+  const candidate = await Auth.User.findOne({ where: { name } })
+  if (candidate) {
+    throw new Error('Пользователь с таким именем уже существует')
+  }
+}
+
+async function getExistedUser (id, Auth) {
+  const candidate = await Auth.User.findByPk(id)
+  if (!candidate) {
+    throw new Error(`Пользователь с id: ${id} не существует`)
+  }
+  return candidate
+}
+
+async function getEntitysByIds (entity, ids, Op) {
+  const entitys = await entity.findAll(
+    { where: { id: { [Op.in]: ids } } }
+  )
+  const foundIds = reduceArrayByKey(entitys, 'id')
+  const notFoundIds = ids.filter(id => !foundIds.includes(id))
+  return { entitys, notFoundIds }
+}
+
+async function getUsers (ids, Auth, Op) {
+  const { users, notFoundIds } = await getEntitysByIds(Auth.User, ids, Op)
+  if (notFoundIds.length) {
+    throw new Error(`Пользователей с id: ${notFoundIds} не существует`)
+  }
+  return users
+}
+
+async function getGroups (ids, Auth, Op) {
+  const { groups, notFoundIds } = await getEntitysByIds(Auth.Group, ids, Op)
+  if (notFoundIds.length) {
+    throw new Error(`Групп с id: ${notFoundIds} не существует`)
+  }
+  return groups
+}
+
+async function addNewUser ({ name, password, employeeId }, fileMess, Auth) {
+  const newUser = await Auth.User.create({
+    name,
+    password: await getEncryptedPassword(password),
+    employeeId,
+    avatar: fileMess ? fileMess.avatar : null
+  })
+  return newUser
+}
+
+async function addNewAvatarToUser (existedUser, avatar, { addAvatar }) {
+  const fileMess = await addAvatar(avatar, existedUser.name)
+  if (fileMess.messageType !== 'error') {
+    existedUser.avatar = fileMess.avatar
+  } else {
+    throw new Error(fileMess.text)
+  }
+}
+
+async function deleteUsersAvatar (existedUser, { deleteAvatar }) {
+  const storedAvatar = existedUser.avatar
+  await deleteAvatar(storedAvatar)
+  existedUser.avatar = null
+}
+
+async function editUsersAvatar (existedUser, avatar, { addAvatar, deleteAvatar }) {
+  const storedAvatar = existedUser.avatar
+  await deleteAvatar(storedAvatar)
+  const fileMess = await addAvatar(avatar, existedUser.name)
+
+  if (fileMess.messageType !== 'error') {
+    existedUser.avatar = fileMess.avatar
+  } else {
+    throw new Error(fileMess.text)
+  }
+}
+
+async function handleAvatar (existedUser, avatar, { addAvatar, deleteAvatar }) {
+  const storedAvatar = existedUser.avatar
+  const needToAddNewAvatar = avatar && !storedAvatar
+  const needToReplaceAvatar = storedAvatar && avatar && (avatar !== storedAvatar)
+
+  if (needToAddNewAvatar) {
+    await addNewAvatarToUser(existedUser, avatar, { addAvatar })
+  } else if (needToReplaceAvatar) {
+    await editUsersAvatar(existedUser, avatar, { addAvatar, deleteAvatar })
+  } else {
+    await deleteUsersAvatar(existedUser, { deleteAvatar })
+  }
+}
+
+async function editExistedUser (existedUser, userInputs, commonFun) {
+  const { addAvatar, deleteAvatar, deleteAvatarUpoad } = commonFun
+  const { name, password, employeeId, avatar } = userInputs
+  existedUser.name = name
+  try {
+    if (password !== '') {
+      existedUser.password = await getEncryptedPassword(password)
+    }
+
+    if (employeeId) {
+      existedUser.employeeId = employeeId
+    }
+
+    await handleAvatar(existedUser, avatar, { addAvatar, deleteAvatar })
+  } catch (err) {
+    if (avatar) {
+      await deleteAvatarUpoad(avatar)
+    }
+    throw err
+  }
+}
+
+function formRequestSession (req, { id, employeeId }, moment) {
+  req.session.cookie.userId = id
+  req.session.cookie.employeeId = employeeId
+  const time = moment().add(moment.duration('04:00:00')).toISOString()
+  req.session.cookie.expires = new Date(time)
+  req.session.save((err) => {
+    if (err) {
+      console.error(`Ошибка сохранения сессии: ${err}`)
+      throw new Error(`Ошибка сохранения сессии: ${err.message}`)
+    }
+  })
+}
+
+function formSuccessAddMessage (message, newUser) {
+  message.text = 'Пользователь успешно добавлен'
+  message.id = newUser.id
+  message.item = JSON.stringify({
+    user: {
+      name: newUser.name,
+      employeeId: newUser.employeeId,
+      avatar: newUser.avatar
+    }
+  })
+}
+
+function formSuccessEditMessage (message, existedUser) {
+  message.text = 'Пользователь успешно изменён'
+  message.id = existedUser.id
+  message.item = JSON.stringify({
+    user: {
+      name: existedUser.name,
+      employeeId: existedUser.employeeId,
+      avatar: existedUser.avatar
+    }
+  })
+}
+
+function formErrorLoginMessage (message) {
+  message.text = 'Ошибка: Пользователь с таким именем или паролем не найден'
+  message.messageType = 'error'
+}
+
+function formSuccessLoginMessage (message, userId, token) {
+  message.text = 'Вход успешен'
+  message.token = token
+  message.userId = userId
+}
 
 export default (context, Auth) => {
-  const { moment, pubsub, _ } = context
-  const { formEmployees, getUsers, formUser, addAvatar, deleteAvatarUpoad, deleteAvatar } = common(context, Auth)
+  const { moment, pubsub, Op } = context
+  const {
+    addAvatar, deleteAvatarUpoad, deleteAvatar, getUserById
+  } = common(context, Auth)
   return {
-    async addUser(root, { user: { name, password, employeeId, avatar } }) {
+    async addUser (root, { user: { name, password, employeeId, avatar } }) {
+      const message = { type: 'addUser', messageType: 'success' }
       try {
-        const iName = _.trim(_.replace(name, /[\[\]&{}<>#$%^*!@+\/\\`~]+/g, ''))
-        const iPassword = _.trim(_.replace(password, /[\'\"\[\ \~]+/g, ''))
-        if (!iName || !iPassword) {
-          const message = {
-            type: 'addUser',
-            text: 'Имя пользователя и пароль не должны быть пустыми',
-            messageType: 'error'
-          }
-          return message
-        }
-        const candidate = await Auth.User.findOne({ where: { name: iName } })
-        if (candidate) {
-          const message = {
-            type: 'addUser',
-            text: 'Пользователь с таким именем уже существует',
-            messageType: 'error'
-          }
-          return message
-        } else {
-          const message = { type: 'addUser', messageType: 'success' }
-          const salt = await bcrypt.genSalt(10)
-          let fileMess
-          if (avatar) {
-            fileMess = await addAvatar(avatar, name)
-          }
-          if (!avatar || fileMess.messageType === 'success') {
-            const newUser = await Auth.User.create({
-              name: iName,
-              password: await bcrypt.hash(iPassword, salt),
-              employeeId,
-              avatar: fileMess ? fileMess.avatar : null
-            })
-            message.text = 'Пользователь успешно добавлен'
-            message.id = newUser.id
-            message.item = JSON.stringify({ user: { name, password, employeeId, avatar: fileMess.avatar || avatar } })
-            const employees = await formEmployees([candidate.employeeId])
-            const rawUser = await getUsers(newUser.id)
-            const user = formUser(rawUser, employees)
-            pubsub.publish('USER_CHANGED', {
-              userChanged: {
-                type: 'add',
-                id: newUser.id,
-                item: user
-              }
-            })
-          } else {
-            message.messageType = 'error'
-            message.text = fileMess.text
-            await deleteAvatarUpoad(avatar)
-          }
-          return message
-        }
-      } catch (err) {
-        const message = {
-          type: 'addUser',
-          text: `Ошибка: ${err}`,
-          messageType: 'error'
-        }
-        return message
-      }
-    },
+        const { iName, iPassword } = getNameAndPassword(name, password)
+        await checkCandidate(iName, Auth)
 
-    async editUser(root, { id, user: { name, password, employeeId, avatar } }) {
-      try {
-        const candidate = await Auth.User.findByPk(id)
-        const iName = _.trim(_.replace(name, /[\[\]&{}<>#$%^*!@+\/\\`~]+/g, ''))
-        const iPassword = _.trim(_.replace(password, /[\'\"\[\ \~]+/g, ''))
-        if (!iName) {
-          const message = {
-            type: 'editUser',
-            text: 'Имя пользователя не должно быть пустым',
-            messageType: 'error'
-          }
-          return message
+        let fileMess
+        if (avatar) {
+          fileMess = await addAvatar(avatar, name)
         }
-        if (!candidate) {
-          const message = {
-            type: 'editUser',
-            text: 'Пользователь с таким id не существует',
-            messageType: 'error'
-          }
-          return message
-        } else {
-          const storedAvatar = candidate.avatar
-          if (iPassword === '') {
-            // Если пароль пустой, то изменяется только имя
-            candidate.name = iName
-          } else {
-            const salt = await bcrypt.genSalt(10)
-            candidate.name = iName
-            candidate.password = await bcrypt.hash(iPassword, salt)
-            if (employeeId) {
-              candidate.employeeId = employeeId
-            }
-          }
-          let fileMess
-          if ((avatar && !storedAvatar)) {
-            // добавление аватара
-            fileMess = await addAvatar(avatar, candidate.name)
-            if (fileMess.messageType === 'error') {
-              await deleteAvatarUpoad(avatar)
-            } else {
-              candidate.avatar = fileMess.avatar
-            }
-          } else if (!avatar && storedAvatar) {
-            // Удаление аватара
-            fileMess = await deleteAvatar(storedAvatar)
-            candidate.avatar = null
-          } else if (storedAvatar && avatar && (avatar !== storedAvatar)) {
-            // Редактирование аватара
-            await deleteAvatar(storedAvatar)
-            fileMess = await addAvatar(avatar, candidate.name)
-            if (fileMess.messageType === 'error') {
-              await deleteAvatarUpoad(avatar)
-            } else {
-              candidate.avatar = fileMess.avatar
-            }
-          }
-          await candidate.save()
-          const message = {
-            type: 'editUser',
-            text: 'Пользователь успешно изменён',
-            messageType: 'success',
-            id,
-            item: JSON.stringify({ user: { name, password, employeeId, avatar } })
-          }
-          const employees = await formEmployees([candidate.employeeId])
-          const rawUser = await getUsers(candidate.id)
-          const user = formUser(rawUser, employees)
+
+        if (!avatar || fileMess.messageType === 'success') {
+          const newUser = await addNewUser({
+            name: iName,
+            password: iPassword,
+            employeeId
+          }, fileMess, Auth)
+          formSuccessAddMessage(message, newUser)
+
           pubsub.publish('USER_CHANGED', {
             userChanged: {
-              type: 'edit',
-              id: candidate.id,
-              item: user
+              type: 'add',
+              id: newUser.id,
+              item: await getUserById(newUser.id)
             }
           })
-          if (fileMess.messageType === 'error') {
-            message.messageType = 'error'
-            message.text = fileMess.text
-          }
-          return message
+        } else {
+          await deleteAvatarUpoad(avatar)
+          throw new Error(fileMess.text)
         }
       } catch (err) {
-        const message = {
-          type: 'editUser',
-          text: `Ошибка: ${err}`,
-          messageType: 'error'
-        }
-        return message
+        message.messageType = 'error'
+        message.text = `Ошибка: ${err}`
       }
+      return message
     },
 
-    async login(root, { user: { name, password } }, { req }) {
+    async editUser (root, { id, user: { name, password, employeeId, avatar } }) {
+      const message = { type: 'editUser', messageType: 'success' }
       try {
-        const candidate = await Auth.User.findOne({ where: { name } })
-        if (candidate) {
-          const isPswd = await bcrypt.compare(password, candidate.password)
-          if (isPswd) {
+        const { iName, iPassword } = getNameAndPassword(name, password)
+        const existedUser = await getExistedUser(id, Auth)
+
+        await editExistedUser(existedUser, {
+          name: iName,
+          password: iPassword,
+          employeeId,
+          avatar
+        }, { addAvatar, deleteAvatar, deleteAvatarUpoad })
+
+        await existedUser.save()
+        formSuccessEditMessage(message, existedUser)
+
+        pubsub.publish('USER_CHANGED', {
+          userChanged: {
+            type: 'edit',
+            id: existedUser.id,
+            item: await getUserById(existedUser.id)
+          }
+        })
+      } catch (err) {
+        message.messageType = 'error'
+        message.text = `Ошибка: ${err}`
+      }
+      return message
+    },
+
+    async login (root, { user: { name, password } }, { req }) {
+      const message = { type: 'login', messageType: 'success', token: null }
+      try {
+        const { iName, iPassword } = getNameAndPassword(name, password)
+        const candidate = await Auth.User.findOne({ where: { name: iName } })
+        if (!candidate) {
+          formErrorLoginMessage(message)
+        } else {
+          const isPasswordCorrect = await bcrypt
+            .compare(iPassword, candidate.password)
+          if (!isPasswordCorrect) {
+            formErrorLoginMessage(message)
+          } else {
             const token = jwt.sign({
               name: candidate.name,
               userId: candidate.id
             }, keys.JWT, { expiresIn: keys.JWT_EXPIRES_IN })
-            req.session.cookie.userId = candidate.id
-            req.session.cookie.employeeId = candidate.employeeId
-            const time = moment().add(moment.duration('04:00:00')).toISOString()
-            req.session.cookie.expires = new Date(time)
-            const message = {
-              type: 'login',
-              text: 'Вход успешен',
-              messageType: 'success',
-              token,
-              UserId: candidate.id
-            }
-            return message
-          } else {
-            const message = {
-              type: 'login',
-              text: 'Ошибка: Пользователь с таким именем или паролем не найден',
-              messageType: 'error',
-              token: null
-            }
-            req.session.save((err) => {
-              if (err) {
-                console.log(`Ошибка: ${err}`)
-              }
-            })
-            console.log(message)
-            return message
+            formRequestSession(req, candidate, moment)
+            formSuccessLoginMessage(message, candidate.id, token)
           }
-        } else {
-          const message = {
-            type: 'login',
-            text: 'Ошибка: Пользователь с таким именем или паролем не найден',
-            messageType: 'error',
-            token: null
-          }
-          return message
         }
       } catch (err) {
-        const message = {
-          type: 'login',
-          text: `Ошибка: ${err}`,
-          messageType: 'error',
-          token: null
-        }
-        return message
+        message.text = `Ошибка: ${err}`
+        message.messageType = 'error'
       }
+      return message
     },
 
-    async deleteUser(root, { id }) {
+    async deleteUser (root, { id }) {
+      let message = {
+        type: 'deleteUser',
+        text: 'Пользователь успешно удалён',
+        messageType: 'success',
+        id
+      }
       try {
         const candidate = await Auth.User.findByPk(id)
         if (candidate.avatar) {
           await deleteAvatar(candidate.avatar)
         }
-        candidate.destroy()
-        const message = {
-          type: 'deleteUser',
-          text: 'Пользователь успешно удалён',
-          messageType: 'success',
-          id
-        }
+        await candidate.destroy()
         pubsub.publish('USER_CHANGED', {
           userChanged: {
             type: 'delete',
             id
           }
         })
-        return message
       } catch (err) {
-        const message = {
+        message = {
           type: 'deleteUser',
           text: `Ошибка: ${err}`,
           messageType: 'error'
         }
-        return message
       }
+      return message
     },
 
-    async addGroup(root, { group: { name, permissions } }) {
+    async addGroup (root, { group: { name, permissions } }) {
       try {
-        const iName = _.trim(_.replace(name, /[\[\]&{}<>#$%^*!@+\/\\`~]+/g, ''))
+        const iName = getValidName(name)
         const candidate = await Auth.Group.findOne({ where: { name: iName } })
         if (candidate) {
           const message = {
@@ -264,20 +332,19 @@ export default (context, Auth) => {
             messageType: 'error'
           }
           return message
-        } else {
-          const newItem = await Auth.Group.create({
-            name: iName,
-            permissions: +permissions
-          })
-          const message = {
-            type: 'addGroup',
-            text: 'Группа успешно добавлена',
-            messageType: 'success',
-            id: newItem.id,
-            item: JSON.stringify({ group: { name, permissions } })
-          }
-          return message
         }
+        const newItem = await Auth.Group.create({
+          name: iName,
+          permissions: +permissions
+        })
+        const message = {
+          type: 'addGroup',
+          text: 'Группа успешно добавлена',
+          messageType: 'success',
+          id: newItem.id,
+          item: JSON.stringify({ group: { name, permissions } })
+        }
+        return message
       } catch (err) {
         const message = {
           type: 'addGroup',
@@ -288,9 +355,9 @@ export default (context, Auth) => {
       }
     },
 
-    async editGroup(root, { id, group: { name, permissions } }) {
+    async editGroup (root, { id, group: { name, permissions } }) {
       try {
-        const iName = _.trim(_.replace(name, /[\[\]&{}<>#$%^*!@+\/\\`~]+/g, ''))
+        const iName = getValidName(name)
         const candidate = await Auth.Group.findByPk(id)
         if (!candidate) {
           const message = {
@@ -299,19 +366,18 @@ export default (context, Auth) => {
             messageType: 'error'
           }
           return message
-        } else {
-          candidate.name = iName
-          candidate.permissions = +permissions
-          await candidate.save()
-          const message = {
-            type: 'editGroup',
-            text: 'Группа успешно изменена',
-            messageType: 'success',
-            id,
-            item: JSON.stringify({ group: { name, permissions } })
-          }
-          return message
         }
+        candidate.name = iName
+        candidate.permissions = +permissions
+        await candidate.save()
+        const message = {
+          type: 'editGroup',
+          text: 'Группа успешно изменена',
+          messageType: 'success',
+          id,
+          item: JSON.stringify({ group: { name, permissions } })
+        }
+        return message
       } catch (err) {
         const message = {
           type: 'editGroup',
@@ -322,10 +388,10 @@ export default (context, Auth) => {
       }
     },
 
-    async deleteGroup(root, { id }) {
+    async deleteGroup (root, { id }) {
       try {
         const candidate = await Auth.Group.findByPk(id)
-        candidate.destroy()
+        await candidate.destroy()
         const message = {
           type: 'deleteGroup',
           text: 'Группа успешно удалена',
@@ -343,7 +409,7 @@ export default (context, Auth) => {
       }
     },
 
-    async assignUsersToGroup(root, { userId, groupId }) {
+    async assignUsersToGroup (root, { userIds, groupId }) {
       try {
         const group = await Auth.Group.findByPk(groupId)
         if (!group) {
@@ -353,29 +419,16 @@ export default (context, Auth) => {
             messageType: 'error'
           }
           return message
-        } else {
-          const users = []
-          for (let i = 0; i < userId.length; i++) {
-            const user = await Auth.User.findByPk(userId[i])
-            if (!user) {
-              const message = {
-                type: 'assignUsersToGroup',
-                text: `Пользователя с id = ${userId[i]} не существует`,
-                messageType: 'error'
-              }
-              return message
-            }
-            users.push(user)
-          }
-          await group.setUsers(users)
-          const message = {
-            type: 'assignUsersToGroup',
-            text: 'Пользователи успешно добавлены в группу',
-            messageType: 'success',
-            id: userId.join(',')
-          }
-          return message
         }
+        const users = await getUsers(userIds, Auth, Op)
+        await group.setUsers(users)
+        const message = {
+          type: 'assignUsersToGroup',
+          text: 'Пользователи успешно добавлены в группу',
+          messageType: 'success',
+          id: userIds.join(',')
+        }
+        return message
       } catch (err) {
         const message = {
           type: 'assignUsersToGroup',
@@ -386,7 +439,7 @@ export default (context, Auth) => {
       }
     },
 
-    async assignUserToGroups(root, { userId, groupId }) {
+    async assignUserToGroups (root, { userId, groupIds }) {
       try {
         const user = await Auth.User.findByPk(userId)
         if (!user) {
@@ -396,29 +449,16 @@ export default (context, Auth) => {
             messageType: 'error'
           }
           return message
-        } else {
-          const groups = []
-          for (let i = 0; i < groupId.length; i++) {
-            const group = await Auth.Group.findByPk(groupId[i])
-            if (!user) {
-              const message = {
-                type: 'assignUserToGroups',
-                text: `Группы с id = ${groupId[i]} не существует`,
-                messageType: 'error'
-              }
-              return message
-            }
-            groups.push(group)
-          }
-          await user.setGroups(groups)
-          const message = {
-            type: 'assignUserToGroups',
-            text: 'Пользователь успешно добавлен в группы',
-            messageType: 'success',
-            id: userId
-          }
-          return message
         }
+        const groups = await getGroups(groupIds, Auth, Op)
+        await user.setGroups(groups)
+        const message = {
+          type: 'assignUserToGroups',
+          text: 'Пользователь успешно добавлен в группы',
+          messageType: 'success',
+          id: userId
+        }
+        return message
       } catch (err) {
         const message = {
           type: 'assignUserToGroups',
@@ -429,7 +469,7 @@ export default (context, Auth) => {
       }
     },
 
-    async removeUsersFromGroup(root, { userId, groupId }) {
+    async removeUsersFromGroup (root, { userIds, groupId }) {
       try {
         const group = await Auth.Group.findByPk(groupId)
         if (!group) {
@@ -439,29 +479,16 @@ export default (context, Auth) => {
             messageType: 'error'
           }
           return message
-        } else {
-          const users = []
-          for (let i = 0; i < userId.length; i++) {
-            const user = await Auth.User.findByPk(userId[i])
-            if (!user) {
-              const message = {
-                type: 'removeUsersFromGroup',
-                text: `Пользователя с id = ${userId[i]} не существует`,
-                messageType: 'error'
-              }
-              return message
-            }
-            users.push(user)
-          }
-          await group.removeUsers(users)
-          const message = {
-            type: 'removeUsersFromGroup',
-            text: 'Пользователи успешно исключены из группы',
-            messageType: 'success',
-            id: userId.join(',')
-          }
-          return message
         }
+        const users = await getUsers(userIds, Auth, Op)
+        await group.removeUsers(users)
+        const message = {
+          type: 'removeUsersFromGroup',
+          text: 'Пользователи успешно исключены из группы',
+          messageType: 'success',
+          id: userIds.join(',')
+        }
+        return message
       } catch (err) {
         const message = {
           type: 'removeUsersFromGroup',
@@ -472,7 +499,7 @@ export default (context, Auth) => {
       }
     },
 
-    async removeUserFromAllGroups(root, { id }) {
+    async removeUserFromAllGroups (root, { id }) {
       try {
         const user = await Auth.User.findByPk(id)
         if (!user) {
@@ -482,17 +509,16 @@ export default (context, Auth) => {
             messageType: 'error'
           }
           return message
-        } else {
-          const userGroups = await user.getGroups()
-          await user.removeGroups(userGroups)
-          const message = {
-            type: 'removeUserFromAllGroups',
-            text: 'Пользователь успешно исключён из всех групп',
-            messageType: 'success',
-            id
-          }
-          return message
         }
+        const userGroups = await user.getGroups()
+        await user.removeGroups(userGroups)
+        const message = {
+          type: 'removeUserFromAllGroups',
+          text: 'Пользователь успешно исключён из всех групп',
+          messageType: 'success',
+          id
+        }
+        return message
       } catch (err) {
         const message = {
           type: 'removeUserFromAllGroups',
@@ -502,26 +528,30 @@ export default (context, Auth) => {
         return message
       }
     },
-  
-    async deleteUploadedFiles(root, { files }) {
-      try {
-        const message = {
-          type: 'deleteUploadedFiles',
-          text: 'Все файлы успешно удалены',
-          messageType: 'success'
-        }
-        for (const file of files) {
-          const mes = await deleteAvatarUpoad(file)
-          if (mes.messageType === 'error') {
-            message.messageType = mes.messageType
-            message.text = mes.text
-          }
-        }
-        return message
-      } catch (err) {
-        console.log(err)
-        throw err
+
+    async deleteUploadedFiles (root, { files }) {
+      const message = {
+        type: 'deleteUploadedFiles',
+        text: '',
+        messageType: 'success'
       }
+      try {
+        const promises = files.map(deleteAvatarUpoad)
+        const deleteFilesResults = await Promise.allSettled(promises)
+        deleteFilesResults.forEach((res) => {
+          if (res.messageType === 'error') {
+            message.messageType = res.messageType
+            message.text += `${res.text}\n`
+          }
+        })
+        if (message.messageType === 'success') {
+          message.text = 'Все файлы успешно удалены'
+        }
+      } catch (err) {
+        message.messageType = 'error'
+        message.text = `Ошибка: ${err}`
+      }
+      return message
     }
   }
 }

@@ -6,23 +6,24 @@ export class ServerError extends Error {
   #time = moment.now()
   #calledFunctions = []
 
-  constructor(message, functionName) {
+  constructor (message, functionName) {
     super(message)
     this.#calledFunctions = [functionName]
   }
 
-  addFunctionName(name) {
+  addFunctionName (name) {
     if (typeof name === 'string') {
       this.calledFunctions.push(name)
     }
   }
 
-  getCalledFunctions() {
+  getCalledFunctions () {
     return [...this.#calledFunctions]
   }
 
-  getErrorTime() {
+  getErrorTime () {
     return this.#time.toString()
   }
-
 }
+
+export default ServerError

@@ -10,11 +10,8 @@ import keys from './server/keys/index.js'
 const colors = vueColors.default
 
 export default {
-  mode: 'universal', // 'spa',
+  mode: 'universal',
   telemetry: false,
-  /*
-  ** Headers of the page
-  */
   head: {
     titleTemplate: '%s - ' + process.env.npm_package_name,
     title: process.env.npm_package_name || '',
@@ -29,13 +26,7 @@ export default {
       { rel: 'stylesheet', href: './fonts/roboto-fontface/css/roboto/roboto-fontface.css' }
     ]
   },
-  /*
-  ** Customize the progress-bar color
-  */
   loading: { color: '#fff' },
-  /*
-  ** Global CSS
-  */
   css: [
   ],
 
@@ -49,37 +40,20 @@ export default {
     INTERNAL_FILE_STORAGE: process.env.INTERNAL_FILE_STORAGE || '/file-storage/int',
     AVATAR_STORAGE: process.env.AVATAR_STORAGE || '/file-storage/avatars'
   },
-  /*
-  ** Plugins to load before mounting the App
-  */
   plugins: [
     // { src: './plugins/docs.js', mode: 'client' }
     // './plugins/docs.client.js'
   ],
-  /*
-  ** Nuxt.js dev-modules
-  */
   buildModules: [
     '@nuxtjs/eslint-module',
     '@nuxtjs/toast',
     '@nuxtjs/vuetify',
     '@nuxtjs/apollo'
   ],
-  /*
-  ** Nuxt.js modules
-  */
   modules: [
     // 'nuxt-webfontloader',
     '@nuxtjs/apollo'
   ],
-  /*
-  ** Axios module configuration
-  ** See https://axios.nuxtjs.org/options
-  */
-  /*
-  ** vuetify module configuration
-  ** https://github.com/nuxt-community/vuetify-module
-  */
   toast: {
     position: 'top-right',
     duration: 5000,
@@ -95,11 +69,6 @@ export default {
     ]
   },
   vuetify: {
-    // customVariables: ['~/assets/variables.scss'],
-    // defaultAssets: {
-    //   font: true
-    //   // icons: 'md'
-    // },
     icons: {
       iconfont: 'mdi'
     },
@@ -132,29 +101,10 @@ export default {
     }
   },
   apollo: {
-    tokenName: 'apollo-token', // optional, default: apollo-token
+    tokenName: 'apollo-token',
     cookieAttributes: {
-      /**
-        * Define when the cookie will be removed. Value can be a Number
-        * which will be interpreted as days from time of creation or a
-        * Date instance. If omitted, the cookie becomes a session cookie.
-        */
-      expires: 7, // optional, default: 7 (days)
-
-      /**
-        * Define the path where the cookie is available. Defaults to '/'
-        */
-      path: '/', // optional
-      /**
-        * Define the domain where the cookie is available. Defaults to
-        * the domain of the page where the cookie was created.
-        */
-      // domain: '/', // optional
-
-      /**
-        * A Boolean indicating if the cookie transmission requires a
-        * secure protocol (https). Defaults to false.
-        */
+      expires: 7,
+      path: '/',
       secure: false
     },
     includeNodeModules: true, // optional, default: false (this includes graphql-tag for node_modules folder)

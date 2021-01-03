@@ -2,9 +2,9 @@
 // import passport from 'passport'
 
 import fastify from 'fastify'
-import fastifySession from 'fastify-session'
-import fastifyCookie from 'fastify-cookie'
-import multer from 'fastify-multer'
+// import fastifySession from 'fastify-session'
+// import fastifyCookie from 'fastify-cookie'
+// import multer from 'fastify-multer'
 
 import gqlTools from 'graphql-tools'
 import gqlMerge from '@graphql-tools/merge'
@@ -14,15 +14,14 @@ import { AuthenticationModule } from './modules/authentication/index.js'
 import { DocumentFlowModule } from './modules/document-flow/index.js'
 import { CoreModule } from './modules/core/index.js'
 
-import * as keys from './keys/index.js'
-import fileMiddleware from './middleware/file.js'
+// import * as keys from './keys/index.js'
+// import fileMiddleware from './middleware/file.js'
 // import fileHandler from './routes/upload.js'
 // const SessionStore = require('./session-store/session-store')
-import { formContext } from './form-context'
+import { formContext } from './form-context.js'
 
 const { mergeTypeDefs } = gqlMerge
 const { makeExecutableSchema } = gqlTools
-
 
 // ----------------------------------------------
 const app = fastify()
@@ -51,25 +50,32 @@ const app = fastify()
 //   handler: () => { }//fileHandler
 // })
 
-async function initializeModulesAndFormSchemas () {
+async function initializeModulesAndFormSchemas (appInstance, isMaster) {
   const schemas = []
-  for (const moduleName in this.modules) {
-    const appModule = this.modules[moduleName]
-    await appModule.init(this.context)
-
-    this.context[appModule.moduleName] = appModule.publicModuleData
+  const moduleNames = Object.keys(appInstance.modules)
+  // eslint-disable-next-line no-restricted-syntax
+  for (const moduleName of moduleNames) {
+    const appModule = appInstance.modules[moduleName]
+    // eslint-disable-next-line no-await-in-loop
+    await appModule.init(appInstance.context, { isMaster })
+    appInstance.context[appModule.moduleName] = appModule.publicModuleData
 
     appModule.schema && schemas.push(appModule.schema)
 
-    for (const key in this.resolvers) {
-      this.resolvers[key] = { ...this.resolvers[key], ...appModule.resolvers[key]}
-    }
+    const resolverNames = Object.keys(appInstance.resolvers)
+    resolverNames.forEach((key) => {
+      appInstance.resolvers[key] = {
+        ...appInstance.resolvers[key],
+        ...appModule.resolvers[key]
+      }
+    })
   }
+
   return schemas
 }
 
-class Application  {
-  constructor(modules = []) {
+class Application {
+  constructor (modules = []) {
     this.app = app
     this.schema = ''
     this.resolvers = {
@@ -84,9 +90,9 @@ class Application  {
     this.context = formContext()
   }
 
-  async init() {
-    const schemas = await initializeModulesAndFormSchemas().call(this)
-    
+  async init (isMaster) {
+    const schemas = await initializeModulesAndFormSchemas(this, isMaster)
+
     this.schema = mergeTypeDefs(schemas)
 
     this.Schema = makeExecutableSchema({
@@ -96,6 +102,12 @@ class Application  {
   }
 }
 
-const application = new Application([CoreModule, AuthenticationModule, DocumentFlowModule])
+const application = new Application(
+  [
+    CoreModule,
+    AuthenticationModule,
+    DocumentFlowModule
+  ]
+)
 
 export default application

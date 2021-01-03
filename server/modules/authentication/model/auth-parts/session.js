@@ -5,9 +5,11 @@ const sessionModel = (Sequelize) => ({
     type: Sequelize.STRING,
     primaryKey: true
   },
-  UserId: Sequelize.INTEGER,
+  userId: Sequelize.INTEGER,
   expires: Sequelize.DATE,
   data: Sequelize.STRING(50000)
 })
 
 export const buildSessionModel = buildModel('Session', sessionModel)
+
+export default buildSessionModel

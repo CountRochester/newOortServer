@@ -25,3 +25,5 @@ export const buildAuthModel = (authDBLink) => {
 
   return { User, Group, session }
 }
+
+export default buildAuthModel

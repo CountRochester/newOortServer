@@ -56,7 +56,7 @@ async function createApp(ssrContext, config = {}) {
   // here we inject the router and store to all child components,
   // making them available everywhere as `this.$router` and `this.$store`.
   const app = {
-    head: {"titleTemplate":"%s - undefined","title":"","meta":[{"charset":"utf-8"},{"name":"viewport","content":"width=device-width, initial-scale=1"},{"hid":"description","name":"description","content":""}],"link":[{"rel":"icon","type":"image\u002Fx-icon","href":"\u002Ffavicon.ico"},{"rel":"stylesheet","href":".\u002Ffonts\u002F@mdi\u002Ffont\u002Fcss\u002Fmaterialdesignicons.css"},{"rel":"stylesheet","href":".\u002Ffonts\u002Froboto-fontface\u002Fcss\u002Froboto\u002Froboto-fontface.css"}],"style":[],"script":[]},
+    head: {"titleTemplate":"%s - newserver","title":"newserver","meta":[{"charset":"utf-8"},{"name":"viewport","content":"width=device-width, initial-scale=1"},{"hid":"description","name":"description","content":"��#"}],"link":[{"rel":"icon","type":"image\u002Fx-icon","href":"\u002Ffavicon.ico"},{"rel":"stylesheet","href":".\u002Ffonts\u002F@mdi\u002Ffont\u002Fcss\u002Fmaterialdesignicons.css"},{"rel":"stylesheet","href":".\u002Ffonts\u002Froboto-fontface\u002Fcss\u002Froboto\u002Froboto-fontface.css"}],"style":[],"script":[]},
 
     router,
     nuxt: {
