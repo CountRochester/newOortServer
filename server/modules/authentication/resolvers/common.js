@@ -2,7 +2,7 @@ import fs from 'fs/promises'
 import path from 'path'
 
 import keys from '../../../keys/index.js'
-import { reduceArrayByKey } from '../../common.js'
+import { reduceArrayByKey, isArray } from '../../common.js'
 
 function getValidatedEmployee (employee = {}) {
   return {
@@ -27,8 +27,15 @@ export default (context, Auth) => {
 
   const common = {}
   common.getUsers = async (id) => {
-    const functionFind = id ? 'findOne' : 'findAll'
-    const where = id ? { where: { id } } : {}
+    const functionFind = id && !isArray(id)
+      ? 'findOne'
+      : 'findAll'
+    let where = {}
+    if (id && !isArray(id)) {
+      where = { where: { id } }
+    } else if (isArray(id)) {
+      where = { where: { id: { [Op.in]: id } } }
+    }
     const users = await Auth.User[functionFind]({
       attributes: [
         'id',
@@ -74,6 +81,11 @@ export default (context, Auth) => {
     }
   }
 
+  common.formUsers = (users, employees) => {
+    const formedUsers = users.map(user => common.formUser(user, employees))
+    return formedUsers
+  }
+
   common.formEmployees = async (ids) => {
     const employees = await common.getEmployees(ids)
     const employeesIndexed = []
@@ -105,7 +117,6 @@ export default (context, Auth) => {
 
   common.getEmployees = async (ids) => {
     if (!ids) { return false }
-    // console.time('getEmployees')
     const employees = await Docs().Employee.findAll({
       where: {
         id: { [Op.in]: ids }
@@ -133,7 +144,6 @@ export default (context, Auth) => {
         }
       ]
     })
-    // console.timeEnd('getEmployees')
     if (!employees) { return false }
     return employees
   }
@@ -182,6 +192,13 @@ export default (context, Auth) => {
   }
 
   common.getUserById = async (id) => {
+    if (isArray(id)) {
+      const rawUsers = await common.getUsers(id)
+      const employeeIds = reduceArrayByKey(rawUsers, 'employeeId')
+      const employees = await common.formEmployees(employeeIds)
+      const users = common.formUsers(rawUsers, employees)
+      return users
+    }
     const rawUser = await common.getUsers(id)
     const employees = await common.formEmployees([rawUser.employeeId])
     const user = common.formUser(rawUser, employees)

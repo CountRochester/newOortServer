@@ -21,7 +21,7 @@ function calculatePermission (userPermissionStr, permissionStr) {
 export default (context, Auth) => {
   const { formEmployees, getUsers, formUser } = common(context, Auth)
   return {
-    async getAllUsers () {
+    async getAllUsers (root, args, { consola }) {
       try {
         const users = await getUsers()
         const employeeIds = reduceArrayByKey(users, 'employeeId')
@@ -29,63 +29,78 @@ export default (context, Auth) => {
         const output = users.map(el => formUser(el, employees))
         return output
       } catch (err) {
-        console.error(err)
+        consola.error(err)
         throw err
       }
     },
 
-    async getUser (root, { id }) {
+    async getUser (root, { id }, { consola }) {
       try {
         const user = await getUsers(id)
         const employees = await formEmployees([user.employeeId])
         return formUser(user, employees)
       } catch (err) {
-        console.error(err)
+        consola.error(err)
         throw err
       }
     },
 
-    async getAllGroups () {
+    async getAllGroups (root, args, {
+      authentication: { model: { Group } },
+      consola
+    }) {
       try {
-        return await Auth.Group.findAll()
+        return await Group.findAll()
       } catch (err) {
-        console.error(err)
+        consola.error(err)
         throw err
       }
     },
 
-    async getGroup (root, { id }) {
+    async getGroup (root, { id }, {
+      authentication: { model: { Group } },
+      consola
+    }) {
       try {
-        return await Auth.Group.findByPk(id)
+        return await Group.findByPk(id)
       } catch (err) {
-        console.error(err)
+        consola.error(err)
         throw err
       }
     },
 
-    async getUserGroups (root, { id }) {
+    async getUserGroups (root, { id }, {
+      authentication: { model: { User } },
+      consola
+    }) {
       try {
-        const user = await Auth.User.findByPk(id)
+        const user = await User.findByPk(id)
         return await user.getGroups()
       } catch (err) {
-        console.error(err)
+        consola.error(err)
         throw err
       }
     },
 
-    async getUsersOfGroup (root, { id }) {
+    async getUsersOfGroup (root, { id }, {
+      authentication: { model: { Group } },
+      consola
+    }) {
       try {
-        const group = await Auth.Group.findByPk(id)
+        const group = await Group.findByPk(id)
         return await group.getUsers()
       } catch (err) {
-        console.error(err)
+        consola.error(err)
         throw err
       }
     },
 
-    async userCheckPermission (root, { id, permission }) {
+    async userCheckPermission (root, { id, permission }, {
+      authentication: { model: { User } },
+      consola
+    }) {
       try {
-        const user = await Auth.User.findByPk(id)
+        const user = await User.findByPk(id)
         if (!user) {
           return undefined
         }
@@ -98,7 +113,7 @@ export default (context, Auth) => {
         const permissionStr = permission.toString(2)
         return calculatePermission(userPermissionStr, permissionStr)
       } catch (err) {
-        console.error(err)
+        consola.error(err)
         throw err
       }
     }

@@ -1,18 +1,19 @@
 import moment from 'moment'
-import gqlSubscriptions from 'graphql-subscriptions'
 import _ from 'lodash'
 import Sequelize from 'sequelize'
+import consola from 'consola'
 
-const { PubSub } = gqlSubscriptions
+import { pubsub } from './modules/common.js'
 
 moment.locale('ru')
 
 export function formContext () {
   return {
     moment,
-    pubsub: new PubSub(),
+    pubsub,
     _,
-    Op: Sequelize.Op
+    Op: Sequelize.Op,
+    consola
   }
 }
 export default formContext

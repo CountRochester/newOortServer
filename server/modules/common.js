@@ -1,24 +1,7 @@
-import gqlSubscriptions from 'graphql-subscriptions'
-
-const { PubSub } = gqlSubscriptions
+export { default as pubsub } from './pub-sub.js'
 
 // eslint-disable-next-line max-len
 export const buildModel = (modelName, modelFun) => (dBLink, Sequelize) => dBLink.define(modelName, modelFun(Sequelize))
-
-export const pubsub = (function () {
-  let instance
-  function init () {
-    return new PubSub()
-  }
-  return {
-    getInstance: () => {
-      if (!instance) {
-        instance = init()
-      }
-      return instance
-    }
-  }
-})()
 
 export class ApplicationModule {
   // eslint-disable-next-line class-methods-use-this
@@ -48,7 +31,11 @@ export class ApplicationModule {
 
 export function reduceArrayByKey (arr, key, toSting) {
   if (toSting) {
-    return arr.reduce((acc, item) => [...acc, item[key].toSting()], [])
+    return arr.reduce((acc, item) => [...acc, item[key].toString()], [])
   }
   return arr.reduce((acc, item) => [...acc, item[key]], [])
+}
+
+export function isArray (arr) {
+  return Object.prototype.toString.call(arr) === '[object Array]'
 }

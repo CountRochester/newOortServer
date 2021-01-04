@@ -30,15 +30,15 @@ async function getEncryptedPassword (password) {
   return encryptedPassword
 }
 
-async function checkCandidate (name, Auth) {
-  const candidate = await Auth.User.findOne({ where: { name } })
+async function checkCandidate (name, User) {
+  const candidate = await User.findOne({ where: { name } })
   if (candidate) {
     throw new Error('Пользователь с таким именем уже существует')
   }
 }
 
-async function getExistedUser (id, Auth) {
-  const candidate = await Auth.User.findByPk(id)
+async function getExistedUser (id, User) {
+  const candidate = await User.findByPk(id)
   if (!candidate) {
     throw new Error(`Пользователь с id: ${id} не существует`)
   }
@@ -54,24 +54,24 @@ async function getEntitysByIds (entity, ids, Op) {
   return { entitys, notFoundIds }
 }
 
-async function getUsers (ids, Auth, Op) {
-  const { users, notFoundIds } = await getEntitysByIds(Auth.User, ids, Op)
+async function getUsers (ids, User, Op) {
+  const { users, notFoundIds } = await getEntitysByIds(User, ids, Op)
   if (notFoundIds.length) {
     throw new Error(`Пользователей с id: ${notFoundIds} не существует`)
   }
   return users
 }
 
-async function getGroups (ids, Auth, Op) {
-  const { groups, notFoundIds } = await getEntitysByIds(Auth.Group, ids, Op)
+async function getGroups (ids, Group, Op) {
+  const { groups, notFoundIds } = await getEntitysByIds(Group, ids, Op)
   if (notFoundIds.length) {
     throw new Error(`Групп с id: ${notFoundIds} не существует`)
   }
   return groups
 }
 
-async function addNewUser ({ name, password, employeeId }, fileMess, Auth) {
-  const newUser = await Auth.User.create({
+async function addNewUser ({ name, password, employeeId }, fileMess, User) {
+  const newUser = await User.create({
     name,
     password: await getEncryptedPassword(password),
     employeeId,
@@ -143,14 +143,14 @@ async function editExistedUser (existedUser, userInputs, commonFun) {
   }
 }
 
-function formRequestSession (req, { id, employeeId }, moment) {
+function formRequestSession ({ id, employeeId }, { req, moment, consola }) {
   req.session.cookie.userId = id
   req.session.cookie.employeeId = employeeId
   const time = moment().add(moment.duration('04:00:00')).toISOString()
   req.session.cookie.expires = new Date(time)
   req.session.save((err) => {
     if (err) {
-      console.error(`Ошибка сохранения сессии: ${err}`)
+      consola.error(`Ошибка сохранения сессии: ${err}`)
       throw new Error(`Ошибка сохранения сессии: ${err.message}`)
     }
   })
@@ -192,16 +192,18 @@ function formSuccessLoginMessage (message, userId, token) {
 }
 
 export default (context, Auth) => {
-  const { moment, pubsub, Op } = context
   const {
     addAvatar, deleteAvatarUpoad, deleteAvatar, getUserById
   } = common(context, Auth)
   return {
-    async addUser (root, { user: { name, password, employeeId, avatar } }) {
+    async addUser (root, { user: { name, password, employeeId, avatar } }, {
+      authentication: { model: { User } },
+      pubsub
+    }) {
       const message = { type: 'addUser', messageType: 'success' }
       try {
         const { iName, iPassword } = getNameAndPassword(name, password)
-        await checkCandidate(iName, Auth)
+        await checkCandidate(iName, User)
 
         let fileMess
         if (avatar) {
@@ -213,14 +215,14 @@ export default (context, Auth) => {
             name: iName,
             password: iPassword,
             employeeId
-          }, fileMess, Auth)
+          }, fileMess, User)
           formSuccessAddMessage(message, newUser)
 
           pubsub.publish('USER_CHANGED', {
             userChanged: {
               type: 'add',
-              id: newUser.id,
-              item: await getUserById(newUser.id)
+              id: [newUser.id],
+              item: [await getUserById(newUser.id)]
             }
           })
         } else {
@@ -234,11 +236,14 @@ export default (context, Auth) => {
       return message
     },
 
-    async editUser (root, { id, user: { name, password, employeeId, avatar } }) {
+    async editUser (root, { id, user: { name, password, employeeId, avatar } }, {
+      authentication: { model: { User } },
+      pubsub
+    }) {
       const message = { type: 'editUser', messageType: 'success' }
       try {
         const { iName, iPassword } = getNameAndPassword(name, password)
-        const existedUser = await getExistedUser(id, Auth)
+        const existedUser = await getExistedUser(id, User)
 
         await editExistedUser(existedUser, {
           name: iName,
@@ -253,8 +258,8 @@ export default (context, Auth) => {
         pubsub.publish('USER_CHANGED', {
           userChanged: {
             type: 'edit',
-            id: existedUser.id,
-            item: await getUserById(existedUser.id)
+            id: [existedUser.id],
+            item: [await getUserById(existedUser.id)]
           }
         })
       } catch (err) {
@@ -264,11 +269,16 @@ export default (context, Auth) => {
       return message
     },
 
-    async login (root, { user: { name, password } }, { req }) {
+    async login (root, { user: { name, password } }, {
+      req,
+      authentication: { model: { User } },
+      moment,
+      consola
+    }) {
       const message = { type: 'login', messageType: 'success', token: null }
       try {
         const { iName, iPassword } = getNameAndPassword(name, password)
-        const candidate = await Auth.User.findOne({ where: { name: iName } })
+        const candidate = await User.findOne({ where: { name: iName } })
         if (!candidate) {
           formErrorLoginMessage(message)
         } else {
@@ -281,7 +291,7 @@ export default (context, Auth) => {
               name: candidate.name,
               userId: candidate.id
             }, keys.JWT, { expiresIn: keys.JWT_EXPIRES_IN })
-            formRequestSession(req, candidate, moment)
+            formRequestSession(candidate, { req, moment, consola })
             formSuccessLoginMessage(message, candidate.id, token)
           }
         }
@@ -292,7 +302,10 @@ export default (context, Auth) => {
       return message
     },
 
-    async deleteUser (root, { id }) {
+    async deleteUser (root, { id }, {
+      authentication: { model: { User } },
+      pubsub
+    }) {
       let message = {
         type: 'deleteUser',
         text: 'Пользователь успешно удалён',
@@ -300,7 +313,7 @@ export default (context, Auth) => {
         id
       }
       try {
-        const candidate = await Auth.User.findByPk(id)
+        const candidate = await User.findByPk(id)
         if (candidate.avatar) {
           await deleteAvatar(candidate.avatar)
         }
@@ -308,7 +321,7 @@ export default (context, Auth) => {
         pubsub.publish('USER_CHANGED', {
           userChanged: {
             type: 'delete',
-            id
+            id: [id]
           }
         })
       } catch (err) {
@@ -321,10 +334,12 @@ export default (context, Auth) => {
       return message
     },
 
-    async addGroup (root, { group: { name, permissions } }) {
+    async addGroup (root, { group: { name, permissions } }, {
+      authentication: { model: { Group } }
+    }) {
       try {
         const iName = getValidName(name)
-        const candidate = await Auth.Group.findOne({ where: { name: iName } })
+        const candidate = await Group.findOne({ where: { name: iName } })
         if (candidate) {
           const message = {
             type: 'addGroup',
@@ -333,7 +348,7 @@ export default (context, Auth) => {
           }
           return message
         }
-        const newItem = await Auth.Group.create({
+        const newItem = await Group.create({
           name: iName,
           permissions: +permissions
         })
@@ -355,10 +370,12 @@ export default (context, Auth) => {
       }
     },
 
-    async editGroup (root, { id, group: { name, permissions } }) {
+    async editGroup (root, { id, group: { name, permissions } }, {
+      authentication: { model: { Group } }
+    }) {
       try {
         const iName = getValidName(name)
-        const candidate = await Auth.Group.findByPk(id)
+        const candidate = await Group.findByPk(id)
         if (!candidate) {
           const message = {
             type: 'editGroup',
@@ -388,9 +405,9 @@ export default (context, Auth) => {
       }
     },
 
-    async deleteGroup (root, { id }) {
+    async deleteGroup (root, { id }, { authentication: { model: { Group } } }) {
       try {
-        const candidate = await Auth.Group.findByPk(id)
+        const candidate = await Group.findByPk(id)
         await candidate.destroy()
         const message = {
           type: 'deleteGroup',
@@ -409,9 +426,13 @@ export default (context, Auth) => {
       }
     },
 
-    async assignUsersToGroup (root, { userIds, groupId }) {
+    async assignUsersToGroup (root, { userIds, groupId }, {
+      authentication: { model: { Group, User } },
+      Op,
+      pubsub
+    }) {
       try {
-        const group = await Auth.Group.findByPk(groupId)
+        const group = await Group.findByPk(groupId)
         if (!group) {
           const message = {
             type: 'assignUsersToGroup',
@@ -420,7 +441,7 @@ export default (context, Auth) => {
           }
           return message
         }
-        const users = await getUsers(userIds, Auth, Op)
+        const users = await getUsers(userIds, User, Op)
         await group.setUsers(users)
         const message = {
           type: 'assignUsersToGroup',
@@ -428,6 +449,13 @@ export default (context, Auth) => {
           messageType: 'success',
           id: userIds.join(',')
         }
+        pubsub.publish('USER_CHANGED', {
+          userChanged: {
+            type: 'edit',
+            id: userIds,
+            item: await getUserById(userIds)
+          }
+        })
         return message
       } catch (err) {
         const message = {
@@ -439,9 +467,13 @@ export default (context, Auth) => {
       }
     },
 
-    async assignUserToGroups (root, { userId, groupIds }) {
+    async assignUserToGroups (root, { userId, groupIds }, {
+      authentication: { model: { Group, User } },
+      Op,
+      pubsub
+    }) {
       try {
-        const user = await Auth.User.findByPk(userId)
+        const user = await User.findByPk(userId)
         if (!user) {
           const message = {
             type: 'assignUserToGroups',
@@ -450,7 +482,7 @@ export default (context, Auth) => {
           }
           return message
         }
-        const groups = await getGroups(groupIds, Auth, Op)
+        const groups = await getGroups(groupIds, Group, Op)
         await user.setGroups(groups)
         const message = {
           type: 'assignUserToGroups',
@@ -458,6 +490,13 @@ export default (context, Auth) => {
           messageType: 'success',
           id: userId
         }
+        pubsub.publish('USER_CHANGED', {
+          userChanged: {
+            type: 'edit',
+            id: [userId],
+            item: [await getUserById(userId)]
+          }
+        })
         return message
       } catch (err) {
         const message = {
@@ -469,9 +508,13 @@ export default (context, Auth) => {
       }
     },
 
-    async removeUsersFromGroup (root, { userIds, groupId }) {
+    async removeUsersFromGroup (root, { userIds, groupId }, {
+      authentication: { model: { Group, User } },
+      Op,
+      pubsub
+    }) {
       try {
-        const group = await Auth.Group.findByPk(groupId)
+        const group = await Group.findByPk(groupId)
         if (!group) {
           const message = {
             type: 'removeUsersFromGroup',
@@ -480,7 +523,7 @@ export default (context, Auth) => {
           }
           return message
         }
-        const users = await getUsers(userIds, Auth, Op)
+        const users = await getUsers(userIds, User, Op)
         await group.removeUsers(users)
         const message = {
           type: 'removeUsersFromGroup',
@@ -488,6 +531,13 @@ export default (context, Auth) => {
           messageType: 'success',
           id: userIds.join(',')
         }
+        pubsub.publish('USER_CHANGED', {
+          userChanged: {
+            type: 'edit',
+            id: userIds,
+            item: await getUserById(userIds)
+          }
+        })
         return message
       } catch (err) {
         const message = {
@@ -499,9 +549,12 @@ export default (context, Auth) => {
       }
     },
 
-    async removeUserFromAllGroups (root, { id }) {
+    async removeUserFromAllGroups (root, { id }, {
+      authentication: { model: { User } },
+      pubsub
+    }) {
       try {
-        const user = await Auth.User.findByPk(id)
+        const user = await User.findByPk(id)
         if (!user) {
           const message = {
             type: 'removeUserFromAllGroups',
@@ -518,6 +571,13 @@ export default (context, Auth) => {
           messageType: 'success',
           id
         }
+        pubsub.publish('USER_CHANGED', {
+          userChanged: {
+            type: 'edit',
+            id: [id],
+            item: [await getUserById(id)]
+          }
+        })
         return message
       } catch (err) {
         const message = {

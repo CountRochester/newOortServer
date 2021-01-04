@@ -17,7 +17,7 @@ const killWorker = (id) => {
   }
 }
 
-const startWorker = () => {
+const startWorker = async () => {
   process.on('SIGINT', () => { })
 
   process.on('message', (message) => {
@@ -27,11 +27,29 @@ const startWorker = () => {
     }
   })
 
-  startApp()
+  const app = await startApp()
+  return app
+}
+
+const resendPubSubMessage = (worker) => (message) => {
+  try {
+    const parsedMessage = JSON.parse(message)
+    if (parsedMessage.pubSub) {
+      const workerIds = Object
+        .keys(cluster.workers)
+        .filter(id => id !== worker.id.toString())
+      workerIds.forEach((workerId) => {
+        cluster.workers[workerId].send(message)
+      })
+    }
+  } catch (err) {
+    console.log(`Message sent to worker ${worker.id} cannot be parsed`)
+  }
 }
 
 const forkTheWorker = () => {
-  cluster.fork()
+  const worker = cluster.fork()
+  worker.on('message', resendPubSubMessage(worker))
 }
 
 const bindRestartTheWorker = (id) => {
@@ -50,6 +68,27 @@ const errorHandler = (err) => {
 
   process.send('restart')
   killWorker()
+}
+
+const workerHandler = (app) => {
+  process.on('message', (message) => {
+    try {
+      const parsedMessage = JSON.parse(message)
+      if (parsedMessage.pubSub) {
+        const { subscription, payload } = parsedMessage.pubSub
+        console.log(`Republishing subscriptions of worker ${process.pid}`)
+        try {
+          app.context.pubsub.publish(subscription, payload, true)
+        } catch (err) {
+          console.log(`Error publishing the subscribe on worker ${process.pid}:`)
+          console.log(err)
+        }
+      }
+    } catch (err) {
+      console.log(`Message sent to worker PID: ${process.pid} cannot be parsed`)
+      console.log('Message:', message)
+    }
+  })
 }
 
 if (cluster.isMaster) {
@@ -90,8 +129,8 @@ if (cluster.isMaster) {
   })
 } else {
   try {
-    startWorker()
     process.on('uncaughtException', errorHandler)
+    startWorker().then(workerHandler)
   } catch (err) {
     errorHandler(err)
   }

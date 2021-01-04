@@ -48,8 +48,8 @@ export default `
 
   type userSubs {
     type: String!
-    id: ID!
-    item: User
+    id: [ID]!
+    item: [User]
   }
 
   input GroupInput {

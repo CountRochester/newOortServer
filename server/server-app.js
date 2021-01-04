@@ -41,7 +41,7 @@ async function start (app) {
 }
 // ----------------------------------------------
 
-const MAX_REQUESTS = 2
+const MAX_REQUESTS = 10
 const QUEUE_TIMEOUT = 5000
 
 const onRequest = (connectionQueue) => (request, reply, done) => {
@@ -61,7 +61,11 @@ export default async function startApp (isMaster) {
 
     const apolloServer = new ApolloServer({
       schema: application.Schema,
-      context: ({ request, reply }) => ({ req: request, res: reply }),
+      context: ({ request, reply }) => ({
+        req: request.raw,
+        res: reply.raw,
+        ...application.context
+      }),
       introspection: true,
       playground: true
     })
@@ -92,7 +96,9 @@ export default async function startApp (isMaster) {
     if (!isMaster) {
       await start(application)
     }
+    return application
   } catch (err) {
     consola.error(err)
+    return undefined
   }
 }
