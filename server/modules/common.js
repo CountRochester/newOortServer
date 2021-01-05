@@ -39,3 +39,7 @@ export function reduceArrayByKey (arr, key, toSting) {
 export function isArray (arr) {
   return Object.prototype.toString.call(arr) === '[object Array]'
 }
+
+export function checkPermission (permission, decodedToken) {
+  return permission <= decodedToken.permission
+}

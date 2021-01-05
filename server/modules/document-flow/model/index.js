@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 import Sequelize from 'sequelize'
 
 // Подключение моделей
@@ -9,13 +10,31 @@ import { buildExtCurrentPositionModel } from './docs-parts/ext-current-position.
 import { buildExtEmployeeModel } from './docs-parts/ext-employee.js'
 import { buildExtIncomingModel } from './docs-parts/ext-incoming.js'
 import { buildExtOutgoingModel } from './docs-parts/ext-outgoing.js'
-import { buildExtIncFileModel, buildIntIncFileModel, buildInternalFileModel, buildExtOutFileModel, buildIntOutFileModel } from './docs-parts/file.js'
-import { buildExtIncStateModel, buildIntIncStateModel, buildInternalIncStateModel } from './docs-parts/inc-state.js'
-import { buildIncomingNumberModel, buildIntIncomingNumberModel, buildInternalIncomingNumberModel } from './docs-parts/incoming-number.js'
+import {
+  buildExtIncFileModel,
+  buildIntIncFileModel,
+  buildInternalFileModel,
+  buildExtOutFileModel,
+  buildIntOutFileModel
+} from './docs-parts/file.js'
+import {
+  buildExtIncStateModel,
+  buildIntIncStateModel,
+  buildInternalIncStateModel
+} from './docs-parts/inc-state.js'
+import {
+  buildIncomingNumberModel,
+  buildIntIncomingNumberModel,
+  buildInternalIncomingNumberModel
+} from './docs-parts/incoming-number.js'
 import { buildIntIncomingModel } from './docs-parts/int-incoming.js'
 import { buildIntOutgoingModel } from './docs-parts/int-outgoing.js'
 import { buildInternalModel } from './docs-parts/internal.js'
-import { buildExtIncNoteModel, buildIntIncNoteModel, buildInternalNoteModel } from './docs-parts/note.js'
+import {
+  buildExtIncNoteModel,
+  buildIntIncNoteModel,
+  buildInternalNoteModel
+} from './docs-parts/note.js'
 import { buildOrganisationModel } from './docs-parts/organisation.js'
 import { buildPositionModel } from './docs-parts/position.js'
 import { buildResolutionModel } from './docs-parts/resolution.js'
@@ -29,7 +48,6 @@ import { buildServiceModel } from './docs-parts/service/service-model.js'
 
 import fetchTimeArray from '../fetch-time/resolver.js'
 import { matrix } from '../fetch-time/entity.js'
-
 
 const changeTracker = entity => (instance, options) => {
   fetchTimeArray[entity] = (+Date.now()).toString()
@@ -63,6 +81,7 @@ export const buildDocsModel = (docsDBLink) => {
   const Contract = buildContractModel(docsDBLink, Sequelize)
   const Internal = buildInternalModel(docsDBLink, Sequelize)
   const InternalNote = buildInternalNoteModel(docsDBLink, Sequelize)
+  // eslint-disable-next-line max-len
   const InternalIncomingNumber = buildInternalIncomingNumberModel(docsDBLink, Sequelize)
   const InternalIncState = buildInternalIncStateModel(docsDBLink, Sequelize)
   const Subdivision = buildSubdivisionModel(docsDBLink, Sequelize)
@@ -71,7 +90,7 @@ export const buildDocsModel = (docsDBLink) => {
 
   const serviceModels = buildServiceModel(docsDBLink, Sequelize)
 
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // Резолюция может относится к нескольким служащим
   Resolution.belongsToMany(CurrentPosition, {
     through: serviceModels.ResEmp,
@@ -82,7 +101,7 @@ export const buildDocsModel = (docsDBLink) => {
   // Автором резолючии может быть один служащий
   Resolution.belongsTo(CurrentPosition, { as: 'author' })
 
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // !!! Внешний входящий документ !!!
   // Внешний входящий документ подписан одним или несколькими служащими
   ExtIncoming.belongsToMany(ExtCurrentPosition, { through: serviceModels.ExtDoc })
@@ -104,7 +123,8 @@ export const buildDocsModel = (docsDBLink) => {
   ExtIncoming.belongsToMany(ExtOutgoing, {
     through: serviceModels.ExtAnswer
   })
-  // Внешний входящий документ может иметь несколько входящих номеров для различных отделов
+  // Внешний входящий документ может иметь несколько входящих
+  // номеров для различных отделов
   ExtIncoming.hasMany(IncomingNumber)
 
   // Внешний входящий документ может иметь несколько примечаний
@@ -115,14 +135,14 @@ export const buildDocsModel = (docsDBLink) => {
   Department.hasMany(ExtIncNote)
   // Примечание принадлежит к одному отделу
   ExtIncNote.belongsTo(Department)
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // Входящий номер принадлежит одному внешнему входящему документу
   IncomingNumber.belongsTo(ExtIncoming)
   // Входящий номер принадлежит одному отделу
   IncomingNumber.belongsTo(Department)
   // В отделе может быть несколько входящих номеров
   Department.hasMany(IncomingNumber)
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // Для каждого отдела своё состояние внешнего входящего документа
   ExtIncState.belongsTo(Department)
   // В отделе может быть несколько состояний внешних входящих документов
@@ -133,11 +153,12 @@ export const buildDocsModel = (docsDBLink) => {
   ExtIncoming.hasMany(ExtIncState)
   // Каждое состояние внешнего входящего документа принадлежит одному состоянию
   ExtIncState.belongsTo(State)
-  // Для каждого состояния может быть несколько состояний внешнего входящего документа
+  // Для каждого состояния может быть несколько
+  // состояний внешнего входящего документа
   State.hasMany(ExtIncState)
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // Внешний входящий документ может быть направлен нескольком отделам
   ExtIncoming.belongsToMany(CurrentPosition, {
     through: serviceModels.ExtIncDep,
@@ -152,7 +173,7 @@ export const buildDocsModel = (docsDBLink) => {
     as: 'parentDepartment'
   })
 
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // !!! Внешний исходящий документ !!!
   // Внешний исходящий документ может быть подписан несколькими служащими
   ExtOutgoing.belongsToMany(CurrentPosition, {
@@ -168,7 +189,8 @@ export const buildDocsModel = (docsDBLink) => {
     as: 'author',
     foreignKey: 'authorId'
   })
-  // Внешний исходящий документ может являться ответом на несколько внешних входящих документов
+  // Внешний исходящий документ может являться ответом
+  // на несколько внешних входящих документов
   ExtOutgoing.belongsToMany(ExtIncoming, {
     through: serviceModels.ExtAnswer,
     as: 'answer',
@@ -189,7 +211,7 @@ export const buildDocsModel = (docsDBLink) => {
   // Служащим может быть адресовано несколько внешних исходящих документов
   ExtCurrentPosition.belongsToMany(ExtOutgoing, { through: serviceModels.ExtOutEmp })
 
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // !!! Внутренний входящий документ !!!
   // Внутренний входящий документ может быть направлен нескольким служащим
   IntIncoming.belongsToMany(CurrentPosition, {
@@ -216,7 +238,8 @@ export const buildDocsModel = (docsDBLink) => {
   CurrentPosition.belongsToMany(IntIncoming, { through: serviceModels.IntIncEmp })
   // Employee.belongsToMany(IntIncoming, { through: IntIncEmp })
 
-  // Внутренний входящий документ может являться ответом на несколько внутренних исходящих документов
+  // Внутренний входящий документ может являться ответом
+  // на несколько внутренних исходящих документов
   IntIncoming.belongsToMany(IntOutgoing, { through: serviceModels.IntAnswer })
   // Внутренний входящий документ может иметь несколько файлов
   IntIncFile.belongsTo(IntIncoming)
@@ -240,7 +263,7 @@ export const buildDocsModel = (docsDBLink) => {
   // Примечание принадлежит к одному отделу
   IntIncNote.belongsTo(Department)
 
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // Входящий номер принадлежит одному внутреннему входящему документу
   IntIncomingNumber.belongsTo(IntIncoming)
   IntIncoming.hasMany(IntIncomingNumber)
@@ -248,7 +271,7 @@ export const buildDocsModel = (docsDBLink) => {
   IntIncomingNumber.belongsTo(Department)
   // В отделе может быть несколько входящих номеров
   Department.hasMany(IntIncomingNumber)
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // Для каждого отдела своё состояние внутреннего входящего документа
   IntIncState.belongsTo(Department)
   // В отделе может быть несколько состояний внутренних входящих документов
@@ -259,10 +282,11 @@ export const buildDocsModel = (docsDBLink) => {
   IntIncoming.hasMany(IntIncState)
   // Каждое состояние внутреннего входящего документа принадлежит одному состоянию
   IntIncState.belongsTo(State)
-  // Для каждого состояния может быть несколько состояний внутреннего входящего документа
+  // Для каждого состояния может быть несколько состояний
+  // внутреннего входящего документа
   State.hasMany(IntIncState)
-  // ----------------------------------------------------------------------------------
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // !!! Внутренний исходящий документ !!!
   // Внутренний исходящий документ может быть направлен нескольким служащим
   IntOutgoing.belongsToMany(CurrentPosition, {
@@ -283,7 +307,8 @@ export const buildDocsModel = (docsDBLink) => {
   IntOutgoing.belongsTo(CurrentPosition, { as: 'author' })
   // Один исполнитель может быть автором нескольких документов
   CurrentPosition.hasMany(IntOutgoing)
-  // Внутренний исходящий документ может являться ответом на несколько внутренних входящих документов
+  // Внутренний исходящий документ может являться ответом
+  // на несколько внутренних входящих документов
   IntOutgoing.belongsToMany(IntIncoming, {
     through: serviceModels.IntAnswer,
     as: 'answer',
@@ -298,16 +323,17 @@ export const buildDocsModel = (docsDBLink) => {
   IntOutgoing.belongsTo(Type)
   // Внутренний исходящий документ может иметь одно состояние
   IntOutgoing.belongsTo(State)
-  // Внутренний исходящий документ может являться входящими документами в других отделах
+  // Внутренний исходящий документ может являться
+  // входящими документами в других отделах
   IntOutgoing.hasMany(IntIncoming)
 
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // Каждый контракт может иметь несколько тем
   Contract.hasMany(Tema)
   // Каждая тема принадлежит одному из контракту
   Tema.belongsTo(Contract)
 
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // !!! Внутренний документ !!!
   // Внутренний документ может быть направлен в несколько отделов
   Internal.belongsToMany(CurrentPosition, {
@@ -347,8 +373,8 @@ export const buildDocsModel = (docsDBLink) => {
   Department.hasMany(InternalNote)
   // Примечание принадлежит к одному отделу
   InternalNote.belongsTo(Department)
-  // ----------------------------------------------------------------------------------
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // Входящий номер принадлежит одному внутреннему входящему документу
   InternalIncomingNumber.belongsTo(Internal)
   Internal.hasMany(InternalIncomingNumber)
@@ -356,7 +382,7 @@ export const buildDocsModel = (docsDBLink) => {
   InternalIncomingNumber.belongsTo(Department)
   // В отделе может быть несколько входящих номеров
   Department.hasMany(InternalIncomingNumber)
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // Для каждого отдела своё состояние внутреннего входящего документа
   InternalIncState.belongsTo(Department)
   // В отделе может быть несколько состояний внутренних входящих документов
@@ -367,14 +393,15 @@ export const buildDocsModel = (docsDBLink) => {
   Internal.hasMany(InternalIncState)
   // Каждое состояние внутреннего входящего документа принадлежит одному состоянию
   InternalIncState.belongsTo(State)
-  // Для каждого состояния может быть несколько состояний внутреннего входящего документа
+  // Для каждого состояния может быть несколько состояний
+  // внутреннего входящего документа
   State.hasMany(InternalIncState)
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
 
   Resolution.belongsTo(Internal)
   Resolution.belongsTo(ExtIncoming)
   Resolution.belongsTo(IntIncoming)
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // В каком-то одном состоянии может находится несколько документов
   // State.hasMany(ExtIncoming)
   State.hasMany(IntIncoming)
@@ -383,13 +410,13 @@ export const buildDocsModel = (docsDBLink) => {
   // У состояния может быть предшествующее состояние
   State.belongsTo(State, { as: 'parentState' })
 
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   Tema.belongsToMany(ExtIncoming, { through: serviceModels.ExtIncTema })
   Tema.belongsToMany(ExtOutgoing, { through: serviceModels.ExtOutTema })
   Tema.belongsToMany(IntOutgoing, { through: serviceModels.IntOutTema })
   Tema.belongsToMany(IntIncoming, { through: serviceModels.IntIncTema })
   Tema.belongsToMany(Internal, { through: serviceModels.IntTema })
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // Подразделение принадлежит отделу
   Subdivision.belongsTo(Department)
   // В отделе может быть несколько подразделений
@@ -398,7 +425,7 @@ export const buildDocsModel = (docsDBLink) => {
   Subdivision.belongsToMany(CurrentPosition, { through: serviceModels.SubEmpl })
   // Работник может быть в нескольких подразделениях
   CurrentPosition.belongsToMany(Subdivision, { through: serviceModels.SubEmpl })
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // Каждая текущая должность принадлежит одному сотруднику
   CurrentPosition.belongsTo(Employee)
   // У сотрудника может быть одновременно несколько должностей
@@ -411,7 +438,7 @@ export const buildDocsModel = (docsDBLink) => {
   CurrentPosition.belongsTo(Department)
   // В отделе может быть несколько текущих должностей
   Department.hasMany(CurrentPosition)
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   // Каждая текущая должность принадлежит одному сотруднику
   ExtCurrentPosition.belongsTo(ExtEmployee)
   // У сотрудника может быть одновременно несколько должностей
@@ -424,7 +451,7 @@ export const buildDocsModel = (docsDBLink) => {
   ExtCurrentPosition.belongsTo(Organisation)
   // В отделе может быть несколько текущих должностей
   Organisation.hasMany(ExtCurrentPosition)
-  // ----------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------
   const Docs = {
     Organisation,
     ExtEmployee,
@@ -460,13 +487,16 @@ export const buildDocsModel = (docsDBLink) => {
     InternalNote
   }
 
-  for (const entity in matrix) {
+  const entitys = Object.keys(matrix)
+  entitys.forEach((entity) => {
     Docs[matrix[entity]].afterCreate(changeTracker(entity))
     Docs[matrix[entity]].afterDestroy(changeTracker(entity))
     Docs[matrix[entity]].afterSave(changeTracker(entity))
     Docs[matrix[entity]].afterUpdate(changeTracker(entity))
     Docs[matrix[entity]].afterBulkDestroy(changeTracker(entity))
-  }
+  })
 
   return Docs
 }
+
+export default buildDocsModel

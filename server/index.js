@@ -3,7 +3,7 @@ import startApp from './server-app.js'
 
 // import { ServerError } from './server-error.js'
 
-const INSTANCES_NUMBER = 4
+const INSTANCES_NUMBER = 1
 const WORKER_RESTART_TIMEOUT = 5000
 
 const killWorker = (id) => {

@@ -5,8 +5,14 @@ const sessionModel = (Sequelize) => ({
     type: Sequelize.STRING,
     primaryKey: true
   },
-  userId: Sequelize.INTEGER,
-  expires: Sequelize.DATE,
+  expires: {
+    type: Sequelize.DATE,
+    allowNull: false
+  },
+  employeeId: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
   data: Sequelize.STRING(50000)
 })
 

@@ -8,6 +8,7 @@ import { buildAuthModel } from './model/index.js'
 
 import schema from './schema/index.js'
 import Resolvers from './resolvers/index.js'
+import { SessionStorage } from './session-storage.js'
 
 // moment.locale('ru')
 
@@ -26,11 +27,11 @@ export class AuthenticationModule extends ApplicationModule {
     this.context = context
 
     try {
-      await authDB.init(options)
       this.dBlink = authDB.link
       consola.success('Подключение к БД аутентификации успешно установлено.')
 
       this.dbModel = buildAuthModel(this.dBlink)
+      await authDB.init(options)
       consola.success('Модель БД аутентификации успешно инициализирована.')
 
       if (options.isMaster) {
@@ -38,9 +39,11 @@ export class AuthenticationModule extends ApplicationModule {
       }
 
       this.resolvers = Resolvers(this.context, this.dbModel)
+      const sessionStorage = new SessionStorage(this.context, this.dbModel)
 
       this.publicModuleData = {
-        model: this.dbModel
+        model: this.dbModel,
+        sessionStorage
       }
     } catch (err) {
       consola.error(err)

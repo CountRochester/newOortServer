@@ -10,7 +10,7 @@ import { buildUserGroupModel } from './auth-parts/service/user-group.js'
 export const buildAuthModel = (authDBLink) => {
   const User = buildUserModel(authDBLink, Sequelize)
   const Group = buildGroupModel(authDBLink, Sequelize)
-  const session = buildSessionModel(authDBLink, Sequelize)
+  const Session = buildSessionModel(authDBLink, Sequelize)
   const userGroup = buildUserGroupModel(authDBLink, Sequelize)
 
   // Пользователь может принадлежать к нескольким группам
@@ -19,11 +19,11 @@ export const buildAuthModel = (authDBLink) => {
   Group.belongsToMany(User, { through: userGroup })
 
   // У пользователя может быть одна сессия
-  User.hasOne(session)
+  User.hasOne(Session)
   // Каждая сессия принадлежит пользователю
-  session.belongsTo(User)
+  Session.belongsTo(User)
 
-  return { User, Group, session }
+  return { User, Group, Session }
 }
 
 export default buildAuthModel

@@ -62,6 +62,8 @@ export default `
     editUser(id: ID! user: UserInput!): Message!
     deleteUser(id: ID!): Message!
     login(user: UserInput!): AuthMessage!
+    sessionUpdate: AuthMessage!
+    logout: AuthMessage!
     addGroup(group: GroupInput!): Message!
     editGroup(id: ID! group: GroupInput!): Message!
     assignUsersToGroup(userIds: [ID]! groupId: ID!): Message!

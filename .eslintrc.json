@@ -13,6 +13,7 @@
     "plugin:nuxt/recommended"
   ],
   "plugins": [
+    
   ],
   "rules": {
     "semi": "off",

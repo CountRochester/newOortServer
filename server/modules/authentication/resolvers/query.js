@@ -21,8 +21,9 @@ function calculatePermission (userPermissionStr, permissionStr) {
 export default (context, Auth) => {
   const { formEmployees, getUsers, formUser } = common(context, Auth)
   return {
-    async getAllUsers (root, args, { consola }) {
+    async getAllUsers (root, args, { consola, req }) {
       try {
+        console.dir(req.headers)
         const users = await getUsers()
         const employeeIds = reduceArrayByKey(users, 'employeeId')
         const employees = await formEmployees(employeeIds)

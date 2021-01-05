@@ -61,11 +61,11 @@ export default async function startApp (isMaster) {
 
     const apolloServer = new ApolloServer({
       schema: application.Schema,
-      context: ({ request, reply }) => ({
-        req: request.raw,
-        res: reply.raw,
-        ...application.context
-      }),
+      context: ({ request, reply }) => {
+        application.context.req = request.raw
+        application.context.res = reply.raw
+        return application.context
+      },
       introspection: true,
       playground: true
     })
@@ -80,7 +80,7 @@ export default async function startApp (isMaster) {
 
     application.app.register(import('fastify-vue-plugin'), {
       config,
-      attachProperties: ['session']
+      attachProperties: []
       // Attach properties from the fastify request
       // object to the nuxt request object.
       // Example use case: Attach session store to nuxt context.

@@ -1,11 +1,10 @@
 /* eslint-disable no-useless-escape */
 
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
 
 import common from './common.js'
-import keys from '../../../keys/index.js'
-import { reduceArrayByKey } from '../../common.js'
+import { reduceArrayByKey, checkPermission } from '../../common.js'
+import permissions from '../permissions.js'
 
 function getNameAndPassword (name, password) {
   const iName = getValidName(name)
@@ -143,19 +142,6 @@ async function editExistedUser (existedUser, userInputs, commonFun) {
   }
 }
 
-function formRequestSession ({ id, employeeId }, { req, moment, consola }) {
-  req.session.cookie.userId = id
-  req.session.cookie.employeeId = employeeId
-  const time = moment().add(moment.duration('04:00:00')).toISOString()
-  req.session.cookie.expires = new Date(time)
-  req.session.save((err) => {
-    if (err) {
-      consola.error(`Ошибка сохранения сессии: ${err}`)
-      throw new Error(`Ошибка сохранения сессии: ${err.message}`)
-    }
-  })
-}
-
 function formSuccessAddMessage (message, newUser) {
   message.text = 'Пользователь успешно добавлен'
   message.id = newUser.id
@@ -180,15 +166,18 @@ function formSuccessEditMessage (message, existedUser) {
   })
 }
 
-function formErrorLoginMessage (message) {
-  message.text = 'Ошибка: Пользователь с таким именем или паролем не найден'
-  message.messageType = 'error'
-}
-
 function formSuccessLoginMessage (message, userId, token) {
   message.text = 'Вход успешен'
   message.token = token
   message.userId = userId
+}
+
+async function isAdminCheck (sessionStorage) {
+  const decodedToken = await sessionStorage.getDecodedToken()
+  const isAdmin = checkPermission(permissions.ADMIN, decodedToken)
+  if (!isAdmin) {
+    throw new Error('У вас нет прав для этой операции')
+  }
 }
 
 export default (context, Auth) => {
@@ -237,11 +226,16 @@ export default (context, Auth) => {
     },
 
     async editUser (root, { id, user: { name, password, employeeId, avatar } }, {
-      authentication: { model: { User } },
+      authentication: { model: { User }, sessionStorage },
       pubsub
     }) {
       const message = { type: 'editUser', messageType: 'success' }
       try {
+        const decodedToken = await sessionStorage.getDecodedToken()
+        const isAdmin = checkPermission(permissions.ADMIN, decodedToken)
+        if (!isAdmin && decodedToken.userId.toString() !== id) {
+          throw new Error('У вас нет прав для этой операции')
+        }
         const { iName, iPassword } = getNameAndPassword(name, password)
         const existedUser = await getExistedUser(id, User)
 
@@ -270,31 +264,46 @@ export default (context, Auth) => {
     },
 
     async login (root, { user: { name, password } }, {
-      req,
-      authentication: { model: { User } },
-      moment,
-      consola
+      authentication: { sessionStorage }
     }) {
       const message = { type: 'login', messageType: 'success', token: null }
       try {
         const { iName, iPassword } = getNameAndPassword(name, password)
-        const candidate = await User.findOne({ where: { name: iName } })
-        if (!candidate) {
-          formErrorLoginMessage(message)
-        } else {
-          const isPasswordCorrect = await bcrypt
-            .compare(iPassword, candidate.password)
-          if (!isPasswordCorrect) {
-            formErrorLoginMessage(message)
-          } else {
-            const token = jwt.sign({
-              name: candidate.name,
-              userId: candidate.id
-            }, keys.JWT, { expiresIn: keys.JWT_EXPIRES_IN })
-            formRequestSession(candidate, { req, moment, consola })
-            formSuccessLoginMessage(message, candidate.id, token)
-          }
-        }
+        const { token, userId } = await sessionStorage
+          .createNewSession(iName, iPassword)
+
+        formSuccessLoginMessage(message, userId, token)
+      } catch (err) {
+        message.text = `Ошибка: ${err}`
+        message.messageType = 'error'
+      }
+      return message
+    },
+
+    async sessionUpdate (root, args, { authentication: { sessionStorage } }) {
+      const message = { type: 'sessionUpdate', messageType: 'success', token: null }
+      try {
+        const decodedToken = await sessionStorage.getDecodedToken()
+        const token = await sessionStorage.updateSessionToken()
+        message.text = 'Сессия успешно продлена'
+        message.token = token
+        message.userId = decodedToken.userId
+      } catch (err) {
+        message.text = `Ошибка: ${err}`
+        message.messageType = 'error'
+      }
+      return message
+    },
+
+    async logout (root, args, { authentication: { sessionStorage } }) {
+      const message = {
+        type: 'login',
+        messageType: 'success',
+        text: 'Вы успешно завершили сессию',
+        token: null
+      }
+      try {
+        message.userId = await sessionStorage.deleteSession()
       } catch (err) {
         message.text = `Ошибка: ${err}`
         message.messageType = 'error'
@@ -303,7 +312,7 @@ export default (context, Auth) => {
     },
 
     async deleteUser (root, { id }, {
-      authentication: { model: { User } },
+      authentication: { model: { User }, sessionStorage },
       pubsub
     }) {
       let message = {
@@ -313,6 +322,8 @@ export default (context, Auth) => {
         id
       }
       try {
+        await isAdminCheck(sessionStorage)
+
         const candidate = await User.findByPk(id)
         if (candidate.avatar) {
           await deleteAvatar(candidate.avatar)
@@ -334,30 +345,32 @@ export default (context, Auth) => {
       return message
     },
 
-    async addGroup (root, { group: { name, permissions } }, {
-      authentication: { model: { Group } }
+    async addGroup (root, { group }, {
+      authentication: { model: { Group }, sessionStorage }
     }) {
       try {
-        const iName = getValidName(name)
+        await isAdminCheck(sessionStorage)
+
+        const iName = getValidName(group.name)
         const candidate = await Group.findOne({ where: { name: iName } })
         if (candidate) {
-          const message = {
-            type: 'addGroup',
-            text: 'Группа с таким названием уже существует',
-            messageType: 'error'
-          }
-          return message
+          throw new Error('Группа с таким названием уже существует')
         }
         const newItem = await Group.create({
           name: iName,
-          permissions: +permissions
+          permissions: +group.permissions
         })
         const message = {
           type: 'addGroup',
           text: 'Группа успешно добавлена',
           messageType: 'success',
           id: newItem.id,
-          item: JSON.stringify({ group: { name, permissions } })
+          item: JSON.stringify({
+            group: {
+              name: group.name,
+              permissions: group.permissions
+            }
+          })
         }
         return message
       } catch (err) {
@@ -370,29 +383,31 @@ export default (context, Auth) => {
       }
     },
 
-    async editGroup (root, { id, group: { name, permissions } }, {
-      authentication: { model: { Group } }
+    async editGroup (root, { id, group }, {
+      authentication: { model: { Group }, sessionStorage }
     }) {
       try {
-        const iName = getValidName(name)
+        await isAdminCheck(sessionStorage)
+
+        const iName = getValidName(group.name)
         const candidate = await Group.findByPk(id)
         if (!candidate) {
-          const message = {
-            type: 'editGroup',
-            text: 'Группы с таким id не существует',
-            messageType: 'error'
-          }
-          return message
+          throw new Error('Группы с таким id не существует')
         }
         candidate.name = iName
-        candidate.permissions = +permissions
+        candidate.permissions = +group.permissions
         await candidate.save()
         const message = {
           type: 'editGroup',
           text: 'Группа успешно изменена',
           messageType: 'success',
           id,
-          item: JSON.stringify({ group: { name, permissions } })
+          item: JSON.stringify({
+            group: {
+              name: group.name,
+              permissions: group.permissions
+            }
+          })
         }
         return message
       } catch (err) {
@@ -405,9 +420,16 @@ export default (context, Auth) => {
       }
     },
 
-    async deleteGroup (root, { id }, { authentication: { model: { Group } } }) {
+    async deleteGroup (root, { id }, {
+      authentication: { model: { Group }, sessionStorage }
+    }) {
       try {
+        await isAdminCheck(sessionStorage)
+
         const candidate = await Group.findByPk(id)
+        if (!candidate) {
+          throw new Error(`Группа с id: ${id} не найдена`)
+        }
         await candidate.destroy()
         const message = {
           type: 'deleteGroup',
@@ -427,11 +449,13 @@ export default (context, Auth) => {
     },
 
     async assignUsersToGroup (root, { userIds, groupId }, {
-      authentication: { model: { Group, User } },
+      authentication: { model: { Group, User }, sessionStorage },
       Op,
       pubsub
     }) {
       try {
+        await isAdminCheck(sessionStorage)
+
         const group = await Group.findByPk(groupId)
         if (!group) {
           const message = {
@@ -468,11 +492,13 @@ export default (context, Auth) => {
     },
 
     async assignUserToGroups (root, { userId, groupIds }, {
-      authentication: { model: { Group, User } },
+      authentication: { model: { Group, User }, sessionStorage },
       Op,
       pubsub
     }) {
       try {
+        await isAdminCheck(sessionStorage)
+
         const user = await User.findByPk(userId)
         if (!user) {
           const message = {
@@ -509,11 +535,13 @@ export default (context, Auth) => {
     },
 
     async removeUsersFromGroup (root, { userIds, groupId }, {
-      authentication: { model: { Group, User } },
+      authentication: { model: { Group, User }, sessionStorage },
       Op,
       pubsub
     }) {
       try {
+        await isAdminCheck(sessionStorage)
+
         const group = await Group.findByPk(groupId)
         if (!group) {
           const message = {
@@ -550,10 +578,12 @@ export default (context, Auth) => {
     },
 
     async removeUserFromAllGroups (root, { id }, {
-      authentication: { model: { User } },
+      authentication: { model: { User }, sessionStorage },
       pubsub
     }) {
       try {
+        await isAdminCheck(sessionStorage)
+
         const user = await User.findByPk(id)
         if (!user) {
           const message = {

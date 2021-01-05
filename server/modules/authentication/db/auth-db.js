@@ -17,7 +17,7 @@ class AuthDB {
   async init (options) {
     try {
       if (options.isMaster) {
-        await this.link.sync(options)
+        await this.link.sync({ alter: true }) // ({ alter: true }) // (options)
       }
       await this.link.authenticate()
     } catch (err) {

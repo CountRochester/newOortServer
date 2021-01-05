@@ -27,15 +27,6 @@ const { makeExecutableSchema } = gqlTools
 const app = fastify()
 
 // ----------------------------------------------
-// Подключение middleware
-// app.register(fastifyCookie)
-// app.register(fastifySession, {
-//   cookieName: 'sessionId',
-//   secret: keys.SESSION_KEY + keys.SESSION_KEY,
-//   cookie: { secure: false },
-//   expires: 4 * 60 * 60 * 1000
-// })
-
 // app.use(fileMiddleware.any())
 
 // app.register(passport.initialize())
