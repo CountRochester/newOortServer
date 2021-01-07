@@ -1,23 +1,24 @@
-module.exports = `
+/* eslint-disable max-len */
+export default `
   type ExtCurrentPosition {
     id: ID!
     startDate: Date
     endDate: Date
-    ExtEmployeeId: ID!
-    PositionId: ID!
-    Position: String
-    OrganisationId: ID!
-    Organisation: String
-    createdAt: TimeStamp!
-    updatedAt: TimeStamp!
+    extEmployeeId: ID!
+    positionId: ID!
+    position: String
+    organisationId: ID!
+    organisation: String
+    createdAt: String!
+    updatedAt: String!
   }
 
   input ExtCurrentPositionInput {
     startDate: Date
     endDate: Date
-    ExtEmployeeId: ID!
-    PositionId: ID!
-    OrganisationId: ID!
+    extEmployeeId: ID!
+    positionId: ID!
+    organisationId: ID!
   }
 
   type Query {
@@ -28,6 +29,6 @@ module.exports = `
   type Mutation {
     addExtCurrentPosition(extCurrentPosition: ExtCurrentPositionInput!): Message!
     editExtCurrentPosition(id: ID! extCurrentPosition: ExtCurrentPositionInput!): Message!
-    deleteExtCurrentPosition(id: ID!): Message!
+    deleteExtCurrentPositions(ids: [ID]!): MessageMult!
   }
 `

@@ -65,9 +65,7 @@ export default async function startApp (isMaster) {
         application.context.req = request.raw
         application.context.res = reply.raw
         return application.context
-      },
-      introspection: true,
-      playground: true
+      }
     })
 
     application.app.register(apolloServer.createHandler({
@@ -76,7 +74,7 @@ export default async function startApp (isMaster) {
 
     application.app.addHook('onRequest', onRequest(connectionQueue))
 
-    application.app.addHook('onResponse', onResponse)
+    application.app.addHook('onResponse', onResponse(connectionQueue))
 
     application.app.register(import('fastify-vue-plugin'), {
       config,

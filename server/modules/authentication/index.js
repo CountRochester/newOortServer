@@ -1,5 +1,4 @@
 import consola from 'consola'
-// import moment from 'moment'
 import bcrypt from 'bcrypt'
 
 import { ApplicationModule } from '../common.js'
@@ -10,13 +9,12 @@ import schema from './schema/index.js'
 import Resolvers from './resolvers/index.js'
 import { SessionStorage } from './session-storage.js'
 
-// moment.locale('ru')
-
 export class AuthenticationModule extends ApplicationModule {
   constructor () {
     super()
     this.schema = schema
     this.class = AuthenticationModule
+    this.dBlink = authDB.link
   }
 
   static get moduleName () { return 'authentication' }
@@ -27,12 +25,10 @@ export class AuthenticationModule extends ApplicationModule {
     this.context = context
 
     try {
-      this.dBlink = authDB.link
-      consola.success('Подключение к БД аутентификации успешно установлено.')
-
       this.dbModel = buildAuthModel(this.dBlink)
-      await authDB.init(options)
       consola.success('Модель БД аутентификации успешно инициализирована.')
+      await authDB.init(options)
+      consola.success('Подключение к БД аутентификации успешно установлено.')
 
       if (options.isMaster) {
         await this.userInit()
@@ -45,6 +41,7 @@ export class AuthenticationModule extends ApplicationModule {
         model: this.dbModel,
         sessionStorage
       }
+      consola.success('Модуль аутентификации успешно инициализирован.')
     } catch (err) {
       consola.error(err)
       throw err

@@ -1,4 +1,4 @@
-module.exports = `
+export default `
   type Organisation {
     id: ID!
     orgName: String!
@@ -10,8 +10,8 @@ module.exports = `
     phone: String
     fax: String
     email: String
-    createdAt: TimeStamp!
-    updatedAt: TimeStamp!
+    createdAt: String!
+    updatedAt: String!
   }
 
   input OrganisationInput {
@@ -29,12 +29,11 @@ module.exports = `
   type Query {
     getAllOrganisation: [Organisation]
     getOrganisation(id: ID!): Organisation
-    getOrganisationExtEmployees(id: ID!): [ExtEmployee]
   }
 
   type Mutation {
     addOrganisation(organisation: OrganisationInput!): Message!
     editOrganisation(id: ID! organisation: OrganisationInput!): Message!
-    deleteOrganisation(id: ID!): Message!
+    deleteOrganisations(ids: [ID]!): MessageMult!
   }
 `

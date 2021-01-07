@@ -1,17 +1,17 @@
-module.exports = `
+export default `
   type ExtIncNote {
     id: ID!
     text: String!
-    ExtIncomingId: ID!
-    DepartmentId: ID!
-    createdAt: TimeStamp!
-    updatedAt: TimeStamp!
+    extIncomingId: ID!
+    departmentId: ID!
+    createdAt: String!
+    updatedAt: String!
   }
 
   input ExtIncNoteInput {
     text: String!
-    ExtIncomingId: ID!
-    DepartmentId: ID!
+    extIncomingId: ID!
+    departmentId: ID!
   }
 
   type Query {
@@ -21,6 +21,6 @@ module.exports = `
   type Mutation {
     addExtIncNote(extIncNote: ExtIncNoteInput!): Message!
     editExtIncNote(id: ID! extIncNote: ExtIncNoteInput!): Message!
-    deleteExtIncNote(id: ID!): Message!
+    deleteExtIncNotes(ids: [ID]!): MessageMult!
   }
 `

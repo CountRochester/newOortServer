@@ -1,15 +1,15 @@
-module.exports = `
+export default `
   type IntIncFile {
     id: ID!
     file: String!
-    IntIncomingId: ID
-    createdAt: TimeStamp!
-    updatedAt: TimeStamp!
+    intIncomingId: ID
+    createdAt: String!
+    updatedAt: String!
   }
 
   input IntIncFileInput {
     file: String!
-    IntIncomingId: ID
+    intIncomingId: ID
   }
 
   type Query {
@@ -22,7 +22,6 @@ module.exports = `
     addIntIncFile(intIncFile: IntIncFileInput!): Message!
     editIntIncFile(id: ID! intIncFile: IntIncFileInput!): Message!
     attachFilesToIntInc(fileIds: [ID], intIncId: ID): Message!
-    deleteIntIncFile(id: ID!): Message!
-    deleteIntIncFiles(id: [ID]): Message!
+    deleteIntIncFiles(ids: [ID]!): MessageMult!
   }
 `

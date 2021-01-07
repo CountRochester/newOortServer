@@ -1,17 +1,17 @@
-module.exports = `
+export default `
   type InternalNote {
     id: ID!
     text: String!
-    InternalId: ID!
-    DepartmentId: ID!
-    createdAt: TimeStamp!
-    updatedAt: TimeStamp!
+    internalId: ID!
+    departmentId: ID!
+    createdAt: String!
+    updatedAt: String!
   }
 
   input InternalNoteInput {
     text: String!
-    InternalId: ID!
-    DepartmentId: ID!
+    internalId: ID!
+    departmentId: ID!
   }
 
   type Query {
@@ -21,6 +21,6 @@ module.exports = `
   type Mutation {
     addInternalNote(internalNote: InternalNoteInput!): Message!
     editInternalNote(id: ID! internalNote: InternalNoteInput!): Message!
-    deleteInternalNote(id: ID!): Message!
+    deleteInternalNotes(ids: [ID]!): MessageMult!
   }
 `

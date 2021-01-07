@@ -1,15 +1,15 @@
-module.exports = `
+export default `
   type ExtIncFile {
     id: ID!
     file: String!
-    ExtIncomingId: ID
-    createdAt: TimeStamp!
-    updatedAt: TimeStamp!
+    extIncomingId: ID
+    createdAt: String!
+    updatedAt: String!
   }
 
   input ExtIncFileInput {
     file: String!
-    ExtIncomingId: ID
+    extIncomingId: ID
   }
 
   type Query {
@@ -22,7 +22,6 @@ module.exports = `
     addExtIncFile(extIncFile: ExtIncFileInput!): Message!
     editExtIncFile(id: ID! extIncFile: ExtIncFileInput!): Message!
     attachFilesToExtInc(fileIds: [ID], extIncId: ID): Message!
-    deleteExtIncFile(id: ID!): Message!
-    deleteExtIncFiles(id: [ID]): Message!
+    deleteExtIncFiles(ids: [ID]): MessageMult!
   }
 `

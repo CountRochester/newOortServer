@@ -1,15 +1,15 @@
-module.exports = `
+export default `
   type InternalFile {
     id: ID!
     file: String!
-    InternalId: ID
-    createdAt: TimeStamp!
-    updatedAt: TimeStamp!
+    internalId: ID
+    createdAt: String!
+    updatedAt: String!
   }
 
   input InternalFileInput {
     file: String!
-    InternalId: ID
+    internalId: ID
   }
 
   type Query {
@@ -22,7 +22,6 @@ module.exports = `
     addInternalFile(internalFile: InternalFileInput!): Message!
     editInternalFile(id: ID! internalFile: InternalFileInput!): Message!
     attachFilesToInternal(fileIds: [ID], internalId: ID): Message!
-    deleteInternalFile(id: ID!): Message!
-    deleteInternalFiles(id: [ID]): Message!
+    deleteInternalFiles(ids: [ID]): MessageMult!
   }
 `

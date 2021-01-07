@@ -1,17 +1,17 @@
-module.exports = `
+export default `
   type InternalIncState {
     id: ID!
-    InternalId: ID
-    DepartmentId: ID
-    StateId: ID
-    createdAt: TimeStamp!
-    updatedAt: TimeStamp!
+    internalId: ID
+    departmentId: ID
+    stateId: ID
+    createdAt: String!
+    updatedAt: String!
   }
 
   input InternalIncStateInput {
-    InternalId: ID
-    DepartmentId: ID
-    StateId: ID
+    internalId: ID
+    departmentId: ID
+    stateId: ID
   }
 
   type Query {
@@ -23,7 +23,11 @@ module.exports = `
   type Mutation {
     addInternalIncState(internalIncState: InternalIncStateInput!): Message!
     editInternalIncState(id: ID! internalIncState: InternalIncStateInput!): Message!
-    deleteInternalIncState(id: ID!): Message!
-    addInternalIncStateToDocument(InternalId: ID!, DepartmentId: ID!, StateId: ID!): Message!
+    deleteInternalIncStates(ids: [ID]!): MessageMult!
+    addInternalIncStateToDocument(
+      internalId: ID!
+      departmentId: ID!
+      stateId: ID!
+    ): Message!
   }
 `

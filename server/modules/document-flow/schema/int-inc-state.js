@@ -1,17 +1,18 @@
-module.exports = `
+/* eslint-disable max-len */
+export default `
   type IntIncState {
     id: ID!
-    IntIncomingId: ID
-    DepartmentId: ID
-    StateId: ID
-    createdAt: TimeStamp!
-    updatedAt: TimeStamp!
+    intIncomingId: ID
+    departmentId: ID
+    stateId: ID
+    createdAt: String!
+    updatedAt: String!
   }
 
   input IntIncStateInput {
-    IntIncomingId: ID
-    DepartmentId: ID
-    StateId: ID
+    intIncomingId: ID
+    departmentId: ID
+    stateId: ID
   }
 
   type Query {
@@ -23,7 +24,7 @@ module.exports = `
   type Mutation {
     addIntIncState(intIncState: IntIncStateInput!): Message!
     editIntIncState(id: ID! intIncState: IntIncStateInput!): Message!
-    deleteIntIncState(id: ID!): Message!
-    addIntIncStateToDocument(IntIncomingId: ID!, DepartmentId: ID!, StateId: ID!): Message!
+    deleteIntIncStates(ids: [ID]!): MessageMult!
+    addIntIncStateToDocument(intIncomingId: ID!, departmentId: ID!, stateId: ID!): Message!
   }
 `

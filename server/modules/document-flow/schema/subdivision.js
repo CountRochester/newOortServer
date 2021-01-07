@@ -1,17 +1,17 @@
-module.exports = `
+export default `
   type Subdivision {
     id: ID!
     name: String!
     fullName: String
-    DepartmentId: ID
-    createdAt: TimeStamp!
-    updatedAt: TimeStamp!
+    departmentId: ID
+    createdAt: String!
+    updatedAt: String!
   }
 
   input SubdivisionInput {
     name: String!
     fullName: String
-    DepartmentId: ID
+    departmentId: ID
   }
 
   type Query {
@@ -22,6 +22,6 @@ module.exports = `
   type Mutation {
     addSubdivision(subdivision: SubdivisionInput!): Message!
     editSubdivision(id: ID! subdivision: SubdivisionInput!): Message!
-    deleteSubdivision(id: ID!): Message!
+    deleteSubdivisions(ids: [ID]!): MessageMult!
   }
 `

@@ -1,12 +1,12 @@
-module.exports = `
+export default `
   type Position {
     id: ID!
     posName: String!
     posNameDat: String
     canSignExtDocs: Boolean
     canSignIntDocs: Boolean
-    createdAt: TimeStamp!
-    updatedAt: TimeStamp!
+    createdAt: String!
+    updatedAt: String!
   }
 
   input PositionInput {
@@ -19,12 +19,11 @@ module.exports = `
   type Query {
     getAllPosition: [Position]
     getPosition(id: ID!): Position
-    getPositionEmployees(id: ID!): [Employee]
   }
 
   type Mutation {
     addPosition(position: PositionInput!): Message!
     editPosition(id: ID! position: PositionInput!): Message!
-    deletePosition(id: ID!): Message!
+    deletePositions(ids: [ID]!): MessageMult!
   }
 `

@@ -1,15 +1,15 @@
-module.exports = `
+export default `
   type IntOutFile {
     id: ID!
     file: String!
-    IntOutgoingId: ID
-    createdAt: TimeStamp!
-    updatedAt: TimeStamp!
+    intOutgoingId: ID
+    createdAt: String!
+    updatedAt: String!
   }
 
   input IntOutFileInput {
     file: String!
-    IntOutgoingId: ID
+    intOutgoingId: ID
   }
 
   type Query {
@@ -21,8 +21,7 @@ module.exports = `
   type Mutation {
     addIntOutFile(intOutFile: IntOutFileInput!): Message!
     editIntOutFile(id: ID! intOutFile: IntOutFileInput!): Message!
-    deleteIntOutFile(id: ID!): Message!
     attachFilesToIntOut(fileIds: [ID], intOutId: ID): Message!
-    deleteIntOutFiles(id: [ID]): Message!
+    deleteIntOutFiles(ids: [ID]): MessageMult!
   }
 `

@@ -27,6 +27,6 @@ export default `
     addDepartment(department: DepartmentInput!): Message!
     editDepartment(id: ID! department: DepartmentInput!): Message!
     editDepartmentChilds(id: ID! parentId: ID childId: [ID]): Message!
-    deleteDepartments(id: [ID]!): MessageMult!
+    deleteDepartments(ids: [ID]!): MessageMult!
   }
 `
