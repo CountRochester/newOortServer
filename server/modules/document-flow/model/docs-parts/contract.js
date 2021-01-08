@@ -23,3 +23,4 @@ const contractModel = (Sequelize) => ({
 })
 
 export const buildContractModel = buildModel('Contract', contractModel)
+export default buildContractModel

@@ -12,6 +12,13 @@ export default `
     date: String!
   }
 
+  type contractSubs {
+    type: String!
+    id: ID
+    ids: [ID]
+    item: Contract
+  }
+
   type Query {
     getAllContracts: [Contract]
     getContract(id: ID!): Contract
@@ -21,5 +28,9 @@ export default `
     addContract(contract: contractInput!): Message!
     editContract(id: ID! contract: contractInput!): Message!
     deleteContracts(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    contractChanged: contractSubs!
   }
 `

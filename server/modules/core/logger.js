@@ -10,17 +10,27 @@ const LOG_EXTENTION = '.json'
 const ARCHIVE_EXTENTION = '.gz.b64'
 const ARCHIVE_FOLDER = 'archive'
 
+// @TODO просмотреть логи за интервал времени (не архивные)
+// @TODO разархивировать лог за конкретный день
+
 /*
   .logs
     | - 07-01-2021.json
     | - 08-01-2021.json
     | - archive
-        | - 06-01-2021.gz
-        | - 05-01-2021.gz
+        | - 06-01-2021.gz.b64
+        | - 05-01-2021.gz.b64
         ...
 */
 
 const formFileStat = (file) => (stat) => ({ file, stat })
+
+function getToken (context) {
+  if (!context || !context.req || !context.req.headers) {
+    return undefined
+  }
+  return context.req.headers.token
+}
 
 function getTrailingZero (num) {
   if (num < 10) {
@@ -135,7 +145,6 @@ class Logger {
         console.log('Создание папки', ARCHIVE_FOLDER)
         await fs.mkdir(this.archiveLogPath)
       }
-      await this.handleArchiveLogs()
     } catch (err) {
       throw new Error(`Ошибка инициализации модуля логирования ошибок: ${err.stack}`)
     }
@@ -162,7 +171,7 @@ class Logger {
     try {
       const fileNames = await this.getArchiveLogFilesNames()
       const needToDelete = filterFilesOutOfDate(fileNames, this.daysToDelete)
-      await this.deleteArchive(needToDelete)
+      await this.deleteArchiveLog(needToDelete)
     } catch (err) {
       console.error(err)
     }
@@ -178,6 +187,10 @@ class Logger {
 
     const destFile = await fs.open(destPath, 'wx')
 
+    const errorHandler = (reject) => (err) => {
+      reject(new Error(`Ошибка архивации: ${err}`))
+    }
+
     await new Promise((resolve, reject) => {
       zlib.gzip(sourceContent, (err, buffer) => {
         if (err || !buffer) {
@@ -185,10 +198,11 @@ class Logger {
         } else {
           fs.writeFile(destFile, buffer.toString('base64'))
             .then(resolve(true))
-            .catch((err) => { reject(new Error(`Ошибка архивации: ${err}`)) })
+            .catch(errorHandler(reject))
         }
       })
     })
+    await destFile.close()
   }
 
   async getLogFileNames () {
@@ -202,11 +216,16 @@ class Logger {
   }
 
   formLog (err) {
+    const now = new Date()
     return {
+      pid: process.pid,
       message: err.message,
       stack: err.stack,
       code: err.code,
-      token: this.context.req.headers.token
+      token: getToken(this.context),
+      date: +now,
+      localDate: now.toLocaleDateString(),
+      localTime: now.toLocaleTimeString()
     }
   }
 
@@ -218,6 +237,7 @@ class Logger {
       const log = this.formLog(error)
       const newLogContent = `${JSON.stringify(log)}\n`
       await fs.writeFile(logfile, newLogContent)
+      await logfile.close()
     } catch (err) {
       console.error(err)
     }
@@ -231,35 +251,32 @@ class Logger {
     }
   }
 
-  async deleteArchive (file) {
+  async deleteArchiveLog (file) {
     try {
       await deleteFiles(this.archiveLogPath, file)
     } catch (err) {
       console.error(err)
     }
   }
-
-  // просмотреть логи за интервал времени (не архивные)
-  // разархивировать лог за конкретный день
 }
 
 const logger = new Logger()
-const context = {
-  req: {
-    headers: {
-      // eslint-disable-next-line max-len
-      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiI4OGRiMzA4MS1mMGM2LTQ3MTgtOGE1ZS1jYjg4ZjAzMGZiMjQiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MDk4NzU3NjMsImV4cCI6MTYyNDI3NTc2M30._Z6Gwnt9T674Xwe5Bfef1k2CSVan0I7J2mPr_2-W5cA'
-    }
-  }
-}
-logger.init(context)
+// const context = {
+//   req: {
+//     headers: {
+// eslint-disable-next-line max-len
+//       token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiI4OGRiMzA4MS1mMGM2LTQ3MTgtOGE1ZS1jYjg4ZjAzMGZiMjQiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MDk4NzU3NjMsImV4cCI6MTYyNDI3NTc2M30._Z6Gwnt9T674Xwe5Bfef1k2CSVan0I7J2mPr_2-W5cA'
+//     }
+//   }
+// }
+// logger.init(context)
 
-const test1 = new Error('This is the test error1')
-const test2 = new Error('This is the test error2')
+// const test1 = new Error('This is the test error1')
+// const test2 = new Error('This is the test error2')
 
-logger.writeLog(test1)
-  .then(() => {
-    logger.writeLog(test2)
-  })
+// logger.writeLog(test1)
+//   .then(() => {
+//     logger.writeLog(test2)
+//   })
 
-// export default logger
+export default logger

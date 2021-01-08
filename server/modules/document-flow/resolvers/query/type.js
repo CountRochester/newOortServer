@@ -1,32 +1,33 @@
 import { isLoggedCheck } from '../../../common.js'
 
 export default {
-  async getAllContract (root, args, {
+  async getAllType (root, args, {
     authentication: { sessionStorage },
-    documentFlow: { model: { Contract } },
+    documentFlow: { model: { Type } },
     core: { logger },
     consola
   }) {
     try {
       await isLoggedCheck(sessionStorage)
-      const contract = await Contract.findAll()
-      return contract
+      const type = await Type.findAll()
+      return type
     } catch (err) {
       logger.writeLog(err)
       consola.error(err)
       throw err
     }
   },
-  async getContract (root, { id }, {
+
+  async getType (root, { id }, {
     authentication: { sessionStorage },
-    documentFlow: { model: { Contract } },
+    documentFlow: { model: { Type } },
     core: { logger },
     consola
   }) {
     try {
       await isLoggedCheck(sessionStorage)
-      const contracts = await Contract.findByPk(id)
-      return contracts
+      const types = await Type.findByPk(id)
+      return types
     } catch (err) {
       logger.writeLog(err)
       consola.error(err)

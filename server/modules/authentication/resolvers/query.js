@@ -21,26 +21,27 @@ function calculatePermission (userPermissionStr, permissionStr) {
 export default (context, Auth) => {
   const { formEmployees, getUsers, formUser } = common(context, Auth)
   return {
-    async getAllUsers (root, args, { consola, req }) {
+    async getAllUsers (root, args, { consola, core: { logger } }) {
       try {
-        console.dir(req.headers)
         const users = await getUsers()
         const employeeIds = reduceArrayByKey(users, 'employeeId')
         const employees = await formEmployees(employeeIds)
         const output = users.map(el => formUser(el, employees))
         return output
       } catch (err) {
+        logger.writeLog(err)
         consola.error(err)
         throw err
       }
     },
 
-    async getUser (root, { id }, { consola }) {
+    async getUser (root, { id }, { consola, core: { logger } }) {
       try {
         const user = await getUsers(id)
         const employees = await formEmployees([user.employeeId])
         return formUser(user, employees)
       } catch (err) {
+        logger.writeLog(err)
         consola.error(err)
         throw err
       }
@@ -48,11 +49,13 @@ export default (context, Auth) => {
 
     async getAllGroups (root, args, {
       authentication: { model: { Group } },
+      core: { logger },
       consola
     }) {
       try {
         return await Group.findAll()
       } catch (err) {
+        logger.writeLog(err)
         consola.error(err)
         throw err
       }
@@ -60,11 +63,13 @@ export default (context, Auth) => {
 
     async getGroup (root, { id }, {
       authentication: { model: { Group } },
+      core: { logger },
       consola
     }) {
       try {
         return await Group.findByPk(id)
       } catch (err) {
+        logger.writeLog(err)
         consola.error(err)
         throw err
       }
@@ -72,12 +77,14 @@ export default (context, Auth) => {
 
     async getUserGroups (root, { id }, {
       authentication: { model: { User } },
+      core: { logger },
       consola
     }) {
       try {
         const user = await User.findByPk(id)
         return await user.getGroups()
       } catch (err) {
+        logger.writeLog(err)
         consola.error(err)
         throw err
       }
@@ -85,12 +92,14 @@ export default (context, Auth) => {
 
     async getUsersOfGroup (root, { id }, {
       authentication: { model: { Group } },
+      core: { logger },
       consola
     }) {
       try {
         const group = await Group.findByPk(id)
         return await group.getUsers()
       } catch (err) {
+        logger.writeLog(err)
         consola.error(err)
         throw err
       }
@@ -98,6 +107,7 @@ export default (context, Auth) => {
 
     async userCheckPermission (root, { id, permission }, {
       authentication: { model: { User } },
+      core: { logger },
       consola
     }) {
       try {
@@ -114,6 +124,7 @@ export default (context, Auth) => {
         const permissionStr = permission.toString(2)
         return calculatePermission(userPermissionStr, permissionStr)
       } catch (err) {
+        logger.writeLog(err)
         consola.error(err)
         throw err
       }

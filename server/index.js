@@ -1,10 +1,12 @@
 import cluster from 'cluster'
 import startApp from './server-app.js'
+import logger from './modules/core/logger.js'
 
 // import { ServerError } from './server-error.js'
 
 const INSTANCES_NUMBER = 1
 const WORKER_RESTART_TIMEOUT = 5000
+const CHECK_LOGS_INTERVAL = 4 * 60 * 60 * 1000
 
 const killWorker = (id) => {
   if (id === null || Number.isNaN(id) || id === undefined) {
@@ -43,6 +45,7 @@ const resendPubSubMessage = (worker) => (message) => {
       })
     }
   } catch (err) {
+    logger.writeLog(err)
     console.log(`Message sent to worker ${worker.id} cannot be parsed`)
   }
 }
@@ -63,6 +66,7 @@ const bindRestartTheWorker = (id) => {
 }
 
 const errorHandler = (err) => {
+  logger.writeLog(err)
   console.error(err)
   console.log('\x1B[32m%s\x1B[0m', 'Restarting worker...')
 
@@ -80,11 +84,13 @@ const workerHandler = (app) => {
         try {
           app.context.pubsub.publish(subscription, payload, true)
         } catch (err) {
+          logger.writeLog(err)
           console.log(`Error publishing the subscribe on worker ${process.pid}:`)
           console.log(err)
         }
       }
     } catch (err) {
+      logger.writeLog(err)
       console.log(`Message sent to worker PID: ${process.pid} cannot be parsed`)
       console.log('Message:', message)
     }
@@ -92,15 +98,21 @@ const workerHandler = (app) => {
 }
 
 if (cluster.isMaster) {
+  // startApp(cluster.isMaster)
   let needToShutDown = false
-
-  startApp(cluster.isMaster)
+  logger.init()
+    .then(() => (startApp(cluster.isMaster)))
     .then(() => {
       for (let i = 0; i < INSTANCES_NUMBER; i++) {
         forkTheWorker()
       }
+      return logger.handleArchiveLogs()
+    })
+    .then(() => {
+      setInterval(logger.handleArchiveLogs, CHECK_LOGS_INTERVAL)
     })
     .catch((err) => {
+      logger.writeLog(err)
       console.error(err)
     })
 

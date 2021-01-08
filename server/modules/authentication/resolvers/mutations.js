@@ -3,24 +3,19 @@
 import bcrypt from 'bcrypt'
 
 import common from './common.js'
-import { reduceArrayByKey, checkPermission } from '../../common.js'
+import {
+  reduceArrayByKey, checkPermission, defaultErrorHandler,
+  getValidValue, isAdminCheck
+} from '../../common.js'
 import permissions from '../permissions.js'
 
 function getNameAndPassword (name, password) {
-  const iName = getValidName(name)
-  const iPassword = getValidPassword(password)
+  const iName = getValidValue(name, 'name')
+  const iPassword = getValidValue(password, 'password')
   if (!iName || !iPassword) {
     throw new Error('Имя пользователя и пароль не должны быть пустыми')
   }
   return { iName, iPassword }
-}
-
-function getValidName (name) {
-  return name.trim().replace(/[\[\]&{}<>#$%^*!@+\/\\`~]+/g, '')
-}
-
-function getValidPassword (password) {
-  return password.trim().replace(/[\'\"\[\ \~]+/g, '')
 }
 
 async function getEncryptedPassword (password) {
@@ -172,14 +167,6 @@ function formSuccessLoginMessage (message, userId, token) {
   message.userId = userId
 }
 
-async function isAdminCheck (sessionStorage) {
-  const decodedToken = await sessionStorage.getDecodedToken()
-  const isAdmin = checkPermission(permissions.ADMIN, decodedToken)
-  if (!isAdmin) {
-    throw new Error('У вас нет прав для этой операции')
-  }
-}
-
 export default (context, Auth) => {
   const {
     addAvatar, deleteAvatarUpoad, deleteAvatar, getUserById
@@ -187,6 +174,7 @@ export default (context, Auth) => {
   return {
     async addUser (root, { user: { name, password, employeeId, avatar } }, {
       authentication: { model: { User } },
+      core: { logger },
       pubsub
     }) {
       const message = { type: 'addUser', messageType: 'success' }
@@ -219,18 +207,18 @@ export default (context, Auth) => {
           throw new Error(fileMess.text)
         }
       } catch (err) {
-        message.messageType = 'error'
-        message.text = `Ошибка: ${err}`
+        return defaultErrorHandler(err, logger)
       }
       return message
     },
 
     async editUser (root, { id, user: { name, password, employeeId, avatar } }, {
       authentication: { model: { User }, sessionStorage },
+      core: { logger },
       pubsub
     }) {
-      const message = { type: 'editUser', messageType: 'success' }
       try {
+        const message = { type: 'editUser', messageType: 'success' }
         const decodedToken = await sessionStorage.getDecodedToken()
         const isAdmin = checkPermission(permissions.ADMIN, decodedToken)
         if (!isAdmin && decodedToken.userId.toString() !== id) {
@@ -256,72 +244,84 @@ export default (context, Auth) => {
             item: [await getUserById(existedUser.id)]
           }
         })
+        return message
       } catch (err) {
-        message.messageType = 'error'
-        message.text = `Ошибка: ${err}`
+        return defaultErrorHandler(err, logger)
       }
-      return message
     },
 
     async login (root, { user: { name, password } }, {
-      authentication: { sessionStorage }
+      authentication: { sessionStorage },
+      core: { logger }
     }) {
-      const message = { type: 'login', messageType: 'success', token: null }
       try {
+        const message = { type: 'login', messageType: 'success', token: null }
         const { iName, iPassword } = getNameAndPassword(name, password)
         const { token, userId } = await sessionStorage
           .createNewSession(iName, iPassword)
 
         formSuccessLoginMessage(message, userId, token)
+        return message
       } catch (err) {
-        message.text = `Ошибка: ${err}`
-        message.messageType = 'error'
+        const errMessage = defaultErrorHandler(err, logger)
+        errMessage.token = null
+        return errMessage
       }
-      return message
     },
 
-    async sessionUpdate (root, args, { authentication: { sessionStorage } }) {
-      const message = { type: 'sessionUpdate', messageType: 'success', token: null }
+    async sessionUpdate (root, args, {
+      authentication: { sessionStorage },
+      core: { logger }
+    }) {
       try {
+        const message = {
+          type: 'sessionUpdate', messageType: 'success', token: null
+        }
         const decodedToken = await sessionStorage.getDecodedToken()
         const token = await sessionStorage.updateSessionToken()
         message.text = 'Сессия успешно продлена'
         message.token = token
         message.userId = decodedToken.userId
+        return message
       } catch (err) {
-        message.text = `Ошибка: ${err}`
-        message.messageType = 'error'
+        const errMessage = defaultErrorHandler(err, logger)
+        errMessage.token = null
+        return errMessage
       }
-      return message
     },
 
-    async logout (root, args, { authentication: { sessionStorage } }) {
-      const message = {
-        type: 'login',
-        messageType: 'success',
-        text: 'Вы успешно завершили сессию',
-        token: null
-      }
+    async logout (root, args, {
+      authentication: { sessionStorage },
+      core: { logger }
+    }) {
       try {
+        const message = {
+          type: 'login',
+          messageType: 'success',
+          text: 'Вы успешно завершили сессию',
+          token: null
+        }
         message.userId = await sessionStorage.deleteSession()
+        return message
       } catch (err) {
-        message.text = `Ошибка: ${err}`
-        message.messageType = 'error'
+        const errMessage = defaultErrorHandler(err, logger)
+        errMessage.token = null
+        return errMessage
       }
-      return message
     },
 
     async deleteUser (root, { id }, {
       authentication: { model: { User }, sessionStorage },
+      core: { logger },
       pubsub
     }) {
-      let message = {
-        type: 'deleteUser',
-        text: 'Пользователь успешно удалён',
-        messageType: 'success',
-        id
-      }
       try {
+        const message = {
+          type: 'deleteUser',
+          text: 'Пользователь успешно удалён',
+          messageType: 'success',
+          id
+        }
         await isAdminCheck(sessionStorage)
 
         const candidate = await User.findByPk(id)
@@ -335,23 +335,20 @@ export default (context, Auth) => {
             id: [id]
           }
         })
+        return message
       } catch (err) {
-        message = {
-          type: 'deleteUser',
-          text: `Ошибка: ${err}`,
-          messageType: 'error'
-        }
+        return defaultErrorHandler(err, logger)
       }
-      return message
     },
 
     async addGroup (root, { group }, {
-      authentication: { model: { Group }, sessionStorage }
+      authentication: { model: { Group }, sessionStorage },
+      core: { logger }
     }) {
       try {
         await isAdminCheck(sessionStorage)
 
-        const iName = getValidName(group.name)
+        const iName = getValidValue(group.name, 'name')
         const candidate = await Group.findOne({ where: { name: iName } })
         if (candidate) {
           throw new Error('Группа с таким названием уже существует')
@@ -374,22 +371,18 @@ export default (context, Auth) => {
         }
         return message
       } catch (err) {
-        const message = {
-          type: 'addGroup',
-          text: `Ошибка: ${err}`,
-          messageType: 'error'
-        }
-        return message
+        return defaultErrorHandler(err, logger)
       }
     },
 
     async editGroup (root, { id, group }, {
-      authentication: { model: { Group }, sessionStorage }
+      authentication: { model: { Group }, sessionStorage },
+      core: { logger }
     }) {
       try {
         await isAdminCheck(sessionStorage)
 
-        const iName = getValidName(group.name)
+        const iName = getValidValue(group.name, 'name')
         const candidate = await Group.findByPk(id)
         if (!candidate) {
           throw new Error('Группы с таким id не существует')
@@ -411,17 +404,13 @@ export default (context, Auth) => {
         }
         return message
       } catch (err) {
-        const message = {
-          type: 'editGroup',
-          text: `Ошибка: ${err}`,
-          messageType: 'error'
-        }
-        return message
+        return defaultErrorHandler(err, logger)
       }
     },
 
     async deleteGroup (root, { id }, {
-      authentication: { model: { Group }, sessionStorage }
+      authentication: { model: { Group }, sessionStorage },
+      core: { logger }
     }) {
       try {
         await isAdminCheck(sessionStorage)
@@ -439,17 +428,13 @@ export default (context, Auth) => {
         }
         return message
       } catch (err) {
-        const message = {
-          type: 'deleteGroup',
-          text: `Ошибка: ${err}`,
-          messageType: 'error'
-        }
-        return message
+        return defaultErrorHandler(err, logger)
       }
     },
 
     async assignUsersToGroup (root, { userIds, groupId }, {
       authentication: { model: { Group, User }, sessionStorage },
+      core: { logger },
       Op,
       pubsub
     }) {
@@ -482,17 +467,13 @@ export default (context, Auth) => {
         })
         return message
       } catch (err) {
-        const message = {
-          type: 'assignUsersToGroup',
-          text: `Ошибка: ${err}`,
-          messageType: 'error'
-        }
-        return message
+        return defaultErrorHandler(err, logger)
       }
     },
 
     async assignUserToGroups (root, { userId, groupIds }, {
       authentication: { model: { Group, User }, sessionStorage },
+      core: { logger },
       Op,
       pubsub
     }) {
@@ -525,17 +506,13 @@ export default (context, Auth) => {
         })
         return message
       } catch (err) {
-        const message = {
-          type: 'assignUserToGroups',
-          text: `Ошибка: ${err}`,
-          messageType: 'error'
-        }
-        return message
+        return defaultErrorHandler(err, logger)
       }
     },
 
     async removeUsersFromGroup (root, { userIds, groupId }, {
       authentication: { model: { Group, User }, sessionStorage },
+      core: { logger },
       Op,
       pubsub
     }) {
@@ -568,17 +545,13 @@ export default (context, Auth) => {
         })
         return message
       } catch (err) {
-        const message = {
-          type: 'removeUsersFromGroup',
-          text: `Ошибка: ${err}`,
-          messageType: 'error'
-        }
-        return message
+        return defaultErrorHandler(err, logger)
       }
     },
 
     async removeUserFromAllGroups (root, { id }, {
       authentication: { model: { User }, sessionStorage },
+      core: { logger },
       pubsub
     }) {
       try {
@@ -610,22 +583,17 @@ export default (context, Auth) => {
         })
         return message
       } catch (err) {
-        const message = {
-          type: 'removeUserFromAllGroups',
-          text: `Ошибка: ${err}`,
-          messageType: 'error'
-        }
-        return message
+        return defaultErrorHandler(err, logger)
       }
     },
 
-    async deleteUploadedFiles (root, { files }) {
-      const message = {
-        type: 'deleteUploadedFiles',
-        text: '',
-        messageType: 'success'
-      }
+    async deleteUploadedFiles (root, { files }, { core: { logger } }) {
       try {
+        const message = {
+          type: 'deleteUploadedFiles',
+          text: '',
+          messageType: 'success'
+        }
         const promises = files.map(deleteAvatarUpoad)
         const deleteFilesResults = await Promise.allSettled(promises)
         deleteFilesResults.forEach((res) => {
@@ -637,11 +605,10 @@ export default (context, Auth) => {
         if (message.messageType === 'success') {
           message.text = 'Все файлы успешно удалены'
         }
+        return message
       } catch (err) {
-        message.messageType = 'error'
-        message.text = `Ошибка: ${err}`
+        return defaultErrorHandler(err, logger)
       }
-      return message
     }
   }
 }
