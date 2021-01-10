@@ -12,8 +12,14 @@ export default `
     contractId: ID
   }
 
+  type temaSubs {
+    type: String!
+    id: ID!
+    item: Tema
+  }
+
   type Query {
-    getAllTema: [Tema]
+    getAllTemas: [Tema]
     getTema(id: ID!): Tema
   }
 
@@ -21,5 +27,9 @@ export default `
     addTema(tema: TemaInput!): Message!
     editTema(id: ID! tema: TemaInput!): Message!
     deleteTemas(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    temaChanged: temaSubs!
   }
 `

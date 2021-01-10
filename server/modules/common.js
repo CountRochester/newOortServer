@@ -110,3 +110,32 @@ export function formatDate (inputDate) {
   }
   return outputDate
 }
+
+function optionsGetNewName (name, options) {
+  const found = options.find(el => el.oldName === name)
+  if (found) {
+    return found.newName
+  } return name
+}
+
+const formNewElement = (options) => (el) => {
+  const newItem = {}
+  const keys = Object.keys(el)
+  keys.forEach((key) => {
+    const newKey = optionsGetNewName(key, options)
+    newItem[newKey] = el[key]
+  })
+  return newItem
+}
+
+export function fieldRenamer (inputArr, options) {
+  /*
+    options:[
+      {
+        oldName: String,
+        newName: String
+      }
+    ]
+  */
+  return inputArr.map(formNewElement(options))
+}

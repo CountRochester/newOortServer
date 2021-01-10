@@ -18,7 +18,7 @@ export default `
   }
 
   type Query {
-    getAllType: [Type]
+    getAllTypes: [Type]
     getType(id: ID!): Type
   }
 

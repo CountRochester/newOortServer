@@ -3,13 +3,15 @@ import consola from 'consola'
 import { ApplicationModule } from '../common.js'
 import docsDB from './db/docs-db.js'
 import { buildDocsModel } from './model/index.js'
+import Resolvers from './resolvers/index.js'
+import schema from './schema/index.js'
 
 export class DocumentFlowModule extends ApplicationModule {
   static get moduleName () { return 'documentFlow' }
 
   constructor () {
     super()
-    this.schema = ''
+    this.schema = schema
     this.class = DocumentFlowModule
     this.dBlink = docsDB.link
   }
@@ -28,7 +30,7 @@ export class DocumentFlowModule extends ApplicationModule {
       this.publicModuleData = {
         model: this.dbModel
       }
-      this.resolvers = {}
+      this.resolvers = Resolvers(this.context, this.dbModel)
       consola.success('Модуль документооборота успешно инициализирован.')
     } catch (err) {
       console.log(err)
