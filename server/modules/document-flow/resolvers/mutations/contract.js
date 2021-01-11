@@ -1,130 +1,68 @@
+import { deleteEntitys, addEntity, editEntity } from './common.js'
+import { getValidValue, formatDate } from '../../../common.js'
 
-import {
-  isManagerCheck, defaultErrorHandler,
-  getValidValue, isClerkCheck, formatDate
-} from '../../../common.js'
+function validateContractInput ({ contract: { number, date } }) {
+  const contractNumber = getValidValue(number, 'contractNumber')
+  if (!contractNumber) {
+    throw new Error('Номер контракта не должен быть пустым')
+  }
+  let iDate
+  if (date) {
+    iDate = formatDate(date)
+  }
+  return {
+    number: contractNumber,
+    date: iDate
+  }
+}
+
+function editContractFun (candidate, args) {
+  const { number, date } = validateContractInput(args)
+  if (date) {
+    candidate.date = date
+  }
+  candidate.number = number
+}
 
 export default {
-  async addContract (root, { contract: { number, date } }, {
-    authentication: { sessionStorage },
-    documentFlow: { model: { Contract } },
-    core: { logger },
-    pubsub
-  }) {
-    try {
-      await isManagerCheck(sessionStorage)
-
-      const contractNumber = getValidValue(number, 'contractNumber')
-      const candidate = await Contract.findOne({ where: { number: contractNumber } })
-      if (candidate) {
-        throw new Error('Такой контракт уже существует')
-      }
-      const iDate = formatDate(date)
-      const newItem = await Contract.create({
-        number: contractNumber,
-        date: iDate
-      })
-
-      const message = {
-        type: 'addContract',
-        text: 'Контракт успешно добавлен',
-        messageType: 'success',
-        id: newItem.id,
-        item: JSON.stringify({ contract: { number: contractNumber, date: iDate } })
-      }
-      pubsub.publish('CONTRACT_CHANGED', {
-        contractChanged: {
-          type: 'add',
-          id: newItem.id,
-          item: newItem
-        }
-      })
-      return message
-    } catch (err) {
-      return defaultErrorHandler(err, logger)
+  async addContract (_, args, serverContext) {
+    const options = {
+      check: 'isManagerCheck',
+      entity: 'Contract',
+      subscriptionTypeName: 'contractChanged',
+      successText: 'Контракт успешно добавлен',
+      subscriptionKey: 'CONTRACT_CHANGED',
+      getValidatedInputs: validateContractInput,
+      existErrorText: 'Такой контракт уже существует',
+      uniqueFields: ['number']
     }
+    const result = await addEntity(options, args, serverContext)
+    return result
   },
 
-  async editContract (root, { id, contract: { number, date } }, {
-    authentication: { sessionStorage },
-    documentFlow: { model: { Contract } },
-    core: { logger },
-    pubsub
-  }) {
-    try {
-      await isManagerCheck(sessionStorage)
-
-      const contractNumber = getValidValue(number, 'contractNumber')
-      const candidate = await Contract.findByPk(id)
-
-      if (!candidate) {
-        throw new Error(`Контракт с id: ${id} не существует`)
-      }
-      if (!contractNumber) {
-        throw new Error('Номер контракта не должен быть пустым')
-      }
-
-      if (date) {
-        candidate.date = formatDate(date)
-      }
-      candidate.number = contractNumber
-      await candidate.save()
-
-      const message = {
-        type: 'editContract',
-        text: 'Контракт успешно изменён',
-        messageType: 'success',
-        id,
-        item: JSON.stringify({
-          contract: {
-            number: contractNumber,
-            date: +candidate.date
-          }
-        })
-      }
-      pubsub.publish('CONTRACT_CHANGED', {
-        contractChanged: {
-          type: 'edit',
-          id: candidate.id,
-          item: candidate
-        }
-      })
-      return message
-    } catch (err) {
-      return defaultErrorHandler(err, logger)
+  async editContract (_, args, serverContext) {
+    const options = {
+      check: 'isManagerCheck',
+      entity: 'Contract',
+      entityName: 'Контракт',
+      subscriptionTypeName: 'contractChanged',
+      successText: 'Контракт успешно изменён',
+      subscriptionKey: 'CONTRACT_CHANGED',
+      editFunction: editContractFun
     }
+    const result = await editEntity(options, args, serverContext)
+    return result
   },
 
-  async deleteContracts (root, { ids }, {
-    authentication: { sessionStorage },
-    documentFlow: { model: { Contract } },
-    core: { logger },
-    Op,
-    pubsub
-  }) {
-    try {
-      await isClerkCheck(sessionStorage)
-      if (!ids.length) {
-        throw new Error('Не указаны id')
-      }
-      await Contract.destroy({
-        where: { id: { [Op.in]: ids } }
-      })
-      const message = {
-        type: 'deleteContract',
-        text: 'Контракты успешно удалены',
-        messageType: 'success',
-        ids
-      }
-      pubsub.publish('CONTRACT_CHANGED', {
-        contractChanged: {
-          type: 'delete',
-          ids
-        }
-      })
-      return message
-    } catch (err) {
-      return defaultErrorHandler(err, logger)
+  async deleteContracts (_, args, serverContext) {
+    const options = {
+      check: 'isClerkCheck',
+      entity: 'Contract',
+      successText: 'Контракты успешно удалены',
+      subscriptionTypeName: 'contractChanged',
+      subscriptionKey: 'CONTRACT_CHANGED'
     }
+    const result = await deleteEntitys(options, args, serverContext)
+    return result
   }
 }

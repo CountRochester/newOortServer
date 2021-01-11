@@ -15,7 +15,7 @@ export default `
     type: String
     text: String!
     messageType: String!
-    id: [ID],
+    ids: [ID],
     item: String
   }
 

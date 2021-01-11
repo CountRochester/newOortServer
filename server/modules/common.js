@@ -56,10 +56,13 @@ export function getCallerName (depth = 0) {
   return callerName
 }
 
-export function defaultErrorHandler (err, logger, callDepth = 1) {
+export function defaultErrorHandler (err, logger, {
+  callDepth = 1,
+  functionName
+} = {}) {
   logger.writeLog(err)
   return {
-    type: getCallerName(callDepth),
+    type: functionName || getCallerName(callDepth),
     messageType: 'error',
     text: `Ошибка: ${err}`
   }
@@ -104,7 +107,7 @@ export function getValidValue (value, regularName) {
 }
 
 export function formatDate (inputDate) {
-  const outputDate = new Date(inputDate)
+  const outputDate = new Date(+inputDate)
   if (Number.isNaN(+outputDate)) {
     throw new TypeError('Указана неверная дата')
   }
@@ -137,5 +140,8 @@ export function fieldRenamer (inputArr, options) {
       }
     ]
   */
+  if (!options || !options.length) {
+    return inputArr
+  }
   return inputArr.map(formNewElement(options))
 }

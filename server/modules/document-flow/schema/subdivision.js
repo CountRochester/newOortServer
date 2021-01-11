@@ -14,8 +14,14 @@ export default `
     departmentId: ID
   }
 
+  type subdivisionSubs {
+    type: String!
+    id: ID!
+    item: Subdivision
+  }
+
   type Query {
-    getAllSubdivision: [Subdivision]
+    getAllSubdivisions: [Subdivision]
     getSubdivision(id: ID!): Subdivision
   }
 
@@ -23,5 +29,9 @@ export default `
     addSubdivision(subdivision: SubdivisionInput!): Message!
     editSubdivision(id: ID! subdivision: SubdivisionInput!): Message!
     deleteSubdivisions(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    subdivisionChanged: subdivisionSubs!
   }
 `
