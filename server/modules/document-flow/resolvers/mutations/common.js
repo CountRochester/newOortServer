@@ -52,7 +52,7 @@ export async function addEntity (options, args, serverContext) {
     if (options.check && checkNames.includes(options.check)) {
       await checks[options.check](sessionStorage)
     }
-    const validatedInputs = options.getValidatedInputs(args)
+    const validatedInputs = await options.getValidatedInputs(args, serverContext)
     const objToSearch = getObjToSearch(options.uniqueFields, validatedInputs)
     const candidate = await model[options.entity].findOne({ where: objToSearch })
     if (candidate) {
@@ -143,13 +143,7 @@ export async function editEntity (options, args, serverContext) {
   }
 }
 
-export async function deleteEntitys (options, { ids }, {
-  core: { logger },
-  authentication: { sessionStorage },
-  documentFlow: { model },
-  Op,
-  pubsub
-}) {
+export async function deleteEntitys (options, args, serverContext) {
   /*
     options: {
       check: String,
@@ -157,14 +151,26 @@ export async function deleteEntitys (options, { ids }, {
       successText: String,
       subscriptionKey: String,
       subscriptionTypeName: String
+      preDeleteFunction: Function (args, serverContext)
     }
   */
+  const {
+    core: { logger },
+    authentication: { sessionStorage },
+    documentFlow: { model },
+    Op,
+    pubsub
+  } = serverContext
+  const { ids } = args
   try {
     if (options.check && checkNames.includes(options.check)) {
       await checks[options.check](sessionStorage)
     }
     if (!ids.length) {
       throw new Error('Не указаны id')
+    }
+    if (options.preDeleteFunction) {
+      await options.preDeleteFunction(args, serverContext)
     }
     await model[options.entity].destroy({
       where: { id: { [Op.in]: ids } }

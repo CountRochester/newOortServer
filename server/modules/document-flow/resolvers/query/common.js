@@ -69,3 +69,40 @@ export async function getEntity (options, { id }, {
     throw err
   }
 }
+
+export async function getEntityByRequest (options, request, {
+  authentication: { sessionStorage },
+  documentFlow: { model },
+  core: { logger },
+  consola
+}) {
+  /*
+    options: {
+      check: String,
+      entity: String,
+      fieldRenamer: [
+        {
+          oldName: String,
+          newName: String
+        }
+      ]
+    }
+  */
+  try {
+    if (options.check && checkNames.includes(options.check)) {
+      await checks[options.check](sessionStorage)
+    }
+    const entity = await model[options.entity].findOne({
+      where: request,
+      raw: true
+    })
+    if (!options.fieldRenamer) {
+      return entity
+    }
+    return fieldRenamer([entity], options.fieldRenamer)[0]
+  } catch (err) {
+    logger.writeLog(err)
+    consola.error(err)
+    throw err
+  }
+}

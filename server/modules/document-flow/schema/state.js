@@ -14,8 +14,14 @@ export default `
     parentStateId: ID
   }
 
+  type stateSubs {
+    type: String!
+    id: ID!
+    item: State
+  }
+
   type Query {
-    getAllState: [State]
+    getAllStates: [State]
     getState(id: ID!): State
     getParentState(id: ID!): State
     getNextState(id: ID!): State
@@ -25,5 +31,9 @@ export default `
     addState(state: StateInput!): Message!
     editState(id: ID! state: StateInput!): Message!
     deleteStates(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    stateChanged: stateSubs!
   }
 `
