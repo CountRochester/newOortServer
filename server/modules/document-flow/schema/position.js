@@ -16,8 +16,15 @@ export default `
     canSignIntDocs: Boolean
   }
 
+  type positionSubs {
+    type: String!
+    id: ID
+    ids: [ID]
+    item: Position
+  }
+
   type Query {
-    getAllPosition: [Position]
+    getAllPositions: [Position]
     getPosition(id: ID!): Position
   }
 
@@ -25,5 +32,9 @@ export default `
     addPosition(position: PositionInput!): Message!
     editPosition(id: ID! position: PositionInput!): Message!
     deletePositions(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    positionChanged: positionSubs!
   }
 `

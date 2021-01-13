@@ -18,6 +18,14 @@ export default `
     parentDepartmentId: ID
   }
 
+  type departmentSubs {
+    type: String!
+    id: ID
+    ids: [ID]
+    item: Department
+    items: [Department]
+  }
+
   type Query {
     getAllDepartments: [Department]
     getDepartment(id: ID!): Department
@@ -26,7 +34,11 @@ export default `
   type Mutation {
     addDepartment(department: DepartmentInput!): Message!
     editDepartment(id: ID! department: DepartmentInput!): Message!
-    editDepartmentChilds(id: ID! parentId: ID childId: [ID]): Message!
+    editDepartmentChilds(id: ID! parentId: ID childIds: [ID]): MessageMult!
     deleteDepartments(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    departmentChanged: departmentSubs!
   }
 `

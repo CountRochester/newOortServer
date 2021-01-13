@@ -36,8 +36,15 @@ export default `
     complete: Boolean
   }
 
+  type resolutionSubs {
+    type: String!
+    id: ID
+    ids: [ID]
+    item: ResolutionWithExecutants
+  }
+
   type Query {
-    getAllResolution: [Resolution]
+    getAllResolutions: [Resolution]
     getResolution(id: ID!): Resolution
     getAllResolutionsInDep(departmentId: ID!): [Resolution]
     getAllResolutionsInDepE(departmentId: ID!): [ResolutionWithExecutants]
@@ -45,16 +52,20 @@ export default `
   }
 
   type Mutation {
-    addResolution(
+    addResolution (
       resolution: ResolutionInput!
       executantIds: [ID]
     ): Message!
-    editResolution(
+    editResolution (
       id: ID!
       resolution: ResolutionInput!
       executantIds: [ID]
     ): Message!
     comleteResolution(id: ID!): Message!
     deleteResolutions(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    resolutionChanged: resolutionSubs!
   }
 `

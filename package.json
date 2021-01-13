@@ -6,7 +6,8 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development node server/index.js",
     "build": "cross-env NODE_ENV=development nuxt",
-    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server"
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
+    "test": "node server/test.js"
   },
   "type": "module",
   "author": "",

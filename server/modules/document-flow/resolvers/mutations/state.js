@@ -78,7 +78,7 @@ export default {
       successText: 'Состояния успешно удалены',
       subscriptionTypeName: 'stateChanged',
       subscriptionKey: 'STATE_CHANGED',
-      preDeleteFunction: deleteIncStates
+      beforeDeleteFunction: deleteIncStates
     }
     const result = await deleteEntitys(options, args, serverContext)
     return result

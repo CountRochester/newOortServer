@@ -16,7 +16,8 @@ export default `
 
   type subdivisionSubs {
     type: String!
-    id: ID!
+    id: ID
+    ids: [ID]
     item: Subdivision
   }
 

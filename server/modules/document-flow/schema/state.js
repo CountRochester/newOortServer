@@ -16,7 +16,8 @@ export default `
 
   type stateSubs {
     type: String!
-    id: ID!
+    id: ID
+    ids: [ID]
     item: State
   }
 

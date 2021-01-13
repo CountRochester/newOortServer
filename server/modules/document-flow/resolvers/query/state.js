@@ -35,15 +35,18 @@ export default {
     return parentState
   },
 
-  async getNextState (_, { id }, serverContext) {
+  async getNextState (_, args, serverContext) {
+    const request = {
+      where: {
+        parentStateId: args.id
+      }
+    }
     const options = {
       check: 'isLoggedCheck',
       entity: 'State',
+      request
     }
-    const request = {
-      parentStateId: id
-    }
-    const result = await getEntityByRequest(options, request, serverContext)
+    const result = await getEntityByRequest(options, args, serverContext)
     return result
   }
 }

@@ -32,8 +32,15 @@ export default `
     subdivisionIds: [ID]
   }
 
+  type employeeSubs {
+    type: String!
+    id: ID
+    ids: [ID]
+    item: Employee
+  }
+
   type Query {
-    getAllEmployee: [Employee]
+    getAllEmployees: [Employee]
     getEmployee(id: ID!): Employee
   }
 
@@ -41,5 +48,9 @@ export default `
     addEmployee(employee: EmployeeInput!): Message!
     editEmployee(id: ID! employee: EmployeeInput!): Message!
     deleteEmployees(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    employeeChanged: employeeSubs!
   }
 `

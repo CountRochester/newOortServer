@@ -39,6 +39,10 @@ export function reduceArrayByKey (arr, key, toSting) {
   return arr.reduce((acc, item) => [...acc, item[key]], [])
 }
 
+export function uniqueArrFilter (arr) {
+  return arr.filter((el, index) => arr.indexOf(el) === index)
+}
+
 export function isArray (arr) {
   return Object.prototype.toString.call(arr) === '[object Array]'
 }
@@ -100,6 +104,7 @@ export const regular = {
   name: /[\[\]&{}<>#$%^*!@+\/\\`~]+/g,
   password: /['"\[ \]~]+/g,
   contractNumber: /[\[\]&{}<>#$%^*!@+`~]+/g,
+  email: /[\[\]&{}<>#$%^*!+\/\\`~]+/g,
 }
 
 export function getValidValue (value, regularName) {

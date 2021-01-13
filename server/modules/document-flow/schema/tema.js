@@ -14,7 +14,8 @@ export default `
 
   type temaSubs {
     type: String!
-    id: ID!
+    id: ID
+    ids: [ID]
     item: Tema
   }
 

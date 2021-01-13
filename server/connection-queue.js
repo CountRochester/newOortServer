@@ -18,15 +18,6 @@ export class ConnectionQueue {
       timeStamp: Date.now()
     }
     this.connections.set(key, connection)
-    // const output = {
-    //   id: request.id,
-    //   headers: request.headers,
-    //   method: request.method,
-    //   query: request.query,
-    //   params: request.params,
-    //   body: request.body
-    // }
-    // console.dir(output)
     console.info(`Новое соединение ${key}. Всего соединений: ${this.size}`)
     this.setTimeoutConnection(key)
     if (this.size > this.maxConnections) {

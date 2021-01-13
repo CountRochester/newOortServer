@@ -70,16 +70,32 @@ export async function getEntity (options, { id }, {
   }
 }
 
-export async function getEntityByRequest (options, request, {
-  authentication: { sessionStorage },
-  documentFlow: { model },
-  core: { logger },
-  consola
-}) {
+async function formResult (entity, { options, args, serverContext }) {
+  let result
+  if (!options.fieldRenamer) {
+    result = entity
+  } else if (options.multiple) {
+    result = fieldRenamer(entity, options.fieldRenamer)
+  } else {
+    // eslint-disable-next-line prefer-destructuring
+    result = fieldRenamer([entity], options.fieldRenamer)[0]
+  }
+
+  if (options.afterRequest) {
+    result = await options.afterRequest(result, args, serverContext)
+  }
+  return result
+}
+
+export async function getEntityByRequest (options, args, serverContext) {
   /*
     options: {
       check: String,
       entity: String,
+      request: Object | Function(beforeRequestResult),
+      multiple: Boolean,
+      beforeRequest: Function(args, serverContext),
+      afterRequest: Function(result, args, serverContext),
       fieldRenamer: [
         {
           oldName: String,
@@ -88,18 +104,31 @@ export async function getEntityByRequest (options, request, {
       ]
     }
   */
+  const {
+    authentication: { sessionStorage },
+    documentFlow: { model },
+    core: { logger },
+    consola
+  } = serverContext
   try {
     if (options.check && checkNames.includes(options.check)) {
       await checks[options.check](sessionStorage)
     }
-    const entity = await model[options.entity].findOne({
-      where: request,
-      raw: true
-    })
-    if (!options.fieldRenamer) {
-      return entity
+    let beforeRequestResult
+    if (options.beforeRequest) {
+      beforeRequestResult = await options.beforeRequest(args, serverContext)
     }
-    return fieldRenamer([entity], options.fieldRenamer)[0]
+    const funName = options.multiple
+      ? 'findAll'
+      : 'findOne'
+    const request = Object.prototype.toString
+      .call(options.request) === '[object Function]'
+      ? options.request(beforeRequestResult)
+      : options.request
+    // request.raw = true
+    const entity = await model[options.entity][funName](request)
+    const resultOptions = { options, args, serverContext }
+    return await formResult(entity, resultOptions)
   } catch (err) {
     logger.writeLog(err)
     consola.error(err)

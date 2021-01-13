@@ -2,8 +2,6 @@
 // import passport from 'passport'
 
 import fastify from 'fastify'
-// import fastifySession from 'fastify-session'
-// import fastifyCookie from 'fastify-cookie'
 // import multer from 'fastify-multer'
 
 import gqlTools from 'graphql-tools'
@@ -17,7 +15,6 @@ import { CoreModule } from './modules/core/index.js'
 // import * as keys from './keys/index.js'
 // import fileMiddleware from './middleware/file.js'
 // import fileHandler from './routes/upload.js'
-// const SessionStore = require('./session-store/session-store')
 import { formContext } from './form-context.js'
 
 const { mergeTypeDefs } = gqlMerge

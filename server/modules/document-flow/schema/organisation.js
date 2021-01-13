@@ -26,8 +26,15 @@ export default `
     email: String
   }
 
+  type organisationSubs {
+    type: String!
+    id: ID
+    ids: [ID]
+    item: Organisation
+  }
+
   type Query {
-    getAllOrganisation: [Organisation]
+    getAllOrganisations: [Organisation]
     getOrganisation(id: ID!): Organisation
   }
 
@@ -35,5 +42,9 @@ export default `
     addOrganisation(organisation: OrganisationInput!): Message!
     editOrganisation(id: ID! organisation: OrganisationInput!): Message!
     deleteOrganisations(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    organisationChanged: organisationSubs!
   }
 `

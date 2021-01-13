@@ -2,3 +2,7 @@
 node_modules/
 server/.logs
 server/test.js
+server/db
+server/graphql
+server/models
+server/static/*

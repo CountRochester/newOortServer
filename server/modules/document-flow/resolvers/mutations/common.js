@@ -23,12 +23,31 @@ function getObjToSearch (uniqueFieldsArr, validatedInputs) {
   return output
 }
 
+function finishCreating (newItem, options, serverContext) {
+  const item = fieldRenamer([newItem.dataValues], options.fieldRenamer)[0]
+  const message = {
+    type: `add${options.entity}`,
+    text: options.successText,
+    messageType: 'success',
+    id: newItem.id,
+    item: JSON.stringify(item)
+  }
+  serverContext.pubsub.publish(options.subscriptionKey, {
+    [options.subscriptionTypeName]: {
+      type: 'add',
+      id: newItem.id,
+      item
+    }
+  })
+  return message
+}
+
+// eslint-disable-next-line complexity
 export async function addEntity (options, args, serverContext) {
   const {
     core: { logger },
     authentication: { sessionStorage },
-    documentFlow: { model },
-    pubsub
+    documentFlow: { model }
   } = serverContext
   /*
   options: {
@@ -38,6 +57,7 @@ export async function addEntity (options, args, serverContext) {
     subscriptionKey: String,
     subscriptionTypeName: String,
     getValidatedInputs: Function(args),
+    afterCreate: Function(newItem, args, serverContext),
     uniqueFields: [String],
     existErrorText: String
     fieldRenamer: [
@@ -53,30 +73,20 @@ export async function addEntity (options, args, serverContext) {
       await checks[options.check](sessionStorage)
     }
     const validatedInputs = await options.getValidatedInputs(args, serverContext)
-    const objToSearch = getObjToSearch(options.uniqueFields, validatedInputs)
-    const candidate = await model[options.entity].findOne({ where: objToSearch })
-    if (candidate) {
-      throw new Error(options.existErrorText)
+    if (options.uniqueFields && options.uniqueFields.length) {
+      const objToSearch = getObjToSearch(options.uniqueFields, validatedInputs)
+      const candidate = await model[options.entity].findOne({ where: objToSearch })
+      if (candidate) {
+        throw new Error(options.existErrorText)
+      }
     }
 
     const newItem = await model[options.entity].create(validatedInputs)
-
-    const item = fieldRenamer([newItem.dataValues], options.fieldRenamer)[0]
-    const message = {
-      type: `add${options.entity}`,
-      text: options.successText,
-      messageType: 'success',
-      id: newItem.id,
-      item: JSON.stringify(item)
+    if (options.afterCreate) {
+      await options.afterCreate(newItem, args, serverContext)
     }
-    pubsub.publish(options.subscriptionKey, {
-      [options.subscriptionTypeName]: {
-        type: 'add',
-        id: newItem.id,
-        item
-      }
-    })
-    return message
+
+    return finishCreating(newItem, options, serverContext)
   } catch (err) {
     return defaultErrorHandler(err, logger, {
       functionName: `add${options.entity}`
@@ -151,7 +161,7 @@ export async function deleteEntitys (options, args, serverContext) {
       successText: String,
       subscriptionKey: String,
       subscriptionTypeName: String
-      preDeleteFunction: Function (args, serverContext)
+      beforeDeleteFunction: Function (args, serverContext)
     }
   */
   const {
@@ -169,8 +179,8 @@ export async function deleteEntitys (options, args, serverContext) {
     if (!ids.length) {
       throw new Error('Не указаны id')
     }
-    if (options.preDeleteFunction) {
-      await options.preDeleteFunction(args, serverContext)
+    if (options.beforeDeleteFunction) {
+      await options.beforeDeleteFunction(args, serverContext)
     }
     await model[options.entity].destroy({
       where: { id: { [Op.in]: ids } }
