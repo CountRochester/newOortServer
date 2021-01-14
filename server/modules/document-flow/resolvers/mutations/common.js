@@ -23,8 +23,9 @@ function getObjToSearch (uniqueFieldsArr, validatedInputs) {
   return output
 }
 
-function finishCreating (newItem, options, serverContext) {
-  const item = fieldRenamer([newItem.dataValues], options.fieldRenamer)[0]
+async function finishCreating (newItem, { options, args, serverContext }) {
+  // const item = fieldRenamer([newItem.dataValues], options.fieldRenamer)[0]
+  const item = await formItem(newItem, { options, args, serverContext })
   const message = {
     type: `add${options.entity}`,
     text: options.successText,
@@ -42,7 +43,32 @@ function finishCreating (newItem, options, serverContext) {
   return message
 }
 
-// eslint-disable-next-line complexity
+async function validate (options, args, serverContext) {
+  const { documentFlow: { model } } = serverContext
+  const validatedInputs = await options.getValidatedInputs(args, serverContext)
+
+  if (options.existValidation) {
+    await options.existValidation(args, serverContext)
+  } else if (options.uniqueFields && options.uniqueFields.length) {
+    const objToSearch = getObjToSearch(options.uniqueFields, validatedInputs)
+    const candidate = await model[options.entity].findOne({ where: objToSearch })
+    if (candidate) {
+      throw new Error(options.existErrorText)
+    }
+  }
+  return validatedInputs
+}
+
+async function formItem (candidate, { options, args, serverContext }) {
+  let item
+  if (options.formOutput) {
+    item = await options.formOutput(candidate, args, serverContext)
+  } else {
+    item = fieldRenamer([candidate.dataValues], options.fieldRenamer)[0]
+  }
+  return item
+}
+
 export async function addEntity (options, args, serverContext) {
   const {
     core: { logger },
@@ -57,7 +83,9 @@ export async function addEntity (options, args, serverContext) {
     subscriptionKey: String,
     subscriptionTypeName: String,
     getValidatedInputs: Function(args),
+    existValidation: Function(args, serverContext),
     afterCreate: Function(newItem, args, serverContext),
+    formOutput: Function(candidate, args, serverContext)
     uniqueFields: [String],
     existErrorText: String
     fieldRenamer: [
@@ -72,14 +100,7 @@ export async function addEntity (options, args, serverContext) {
     if (options.check && checkNames.includes(options.check)) {
       await checks[options.check](sessionStorage)
     }
-    const validatedInputs = await options.getValidatedInputs(args, serverContext)
-    if (options.uniqueFields && options.uniqueFields.length) {
-      const objToSearch = getObjToSearch(options.uniqueFields, validatedInputs)
-      const candidate = await model[options.entity].findOne({ where: objToSearch })
-      if (candidate) {
-        throw new Error(options.existErrorText)
-      }
-    }
+    const validatedInputs = await validate()
 
     const newItem = await model[options.entity].create(validatedInputs)
     if (options.afterCreate) {
@@ -110,6 +131,7 @@ export async function editEntity (options, args, serverContext) {
     subscriptionKey: String,
     subscriptionTypeName: String,
     editFunction: Function(candidate, args, serverContext) // save not needed
+    formOutput: Function(candidate, args, serverContext)
     fieldRenamer: [
       {
         oldName: String,
@@ -130,7 +152,9 @@ export async function editEntity (options, args, serverContext) {
     await options.editFunction(candidate, args, serverContext)
 
     await candidate.save()
-    const item = fieldRenamer([candidate.dataValues], options.fieldRenamer)[0]
+
+    const item = await formItem(candidate, { options, args, serverContext })
+
     const message = {
       type: `edit${options.entity}`,
       text: options.successText,

@@ -1,0 +1,238 @@
+curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}' & curl --location --request POST 'http://localhost:3000/graphql' \
+--header 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJmNzYxN2YxOC0yYTM0LTQwMzUtODRhNC0zMjY0NTI2MjcxNTgiLCJuYW1lIjoiR3VzZXZBbmRyZXkiLCJ1c2VySWQiOjIsInBlcm1pc3Npb24iOjMxLCJlbXBsb3llZUlkIjoyLCJpYXQiOjE2MTA2MTY4MzEsImV4cCI6MTYyNTAxNjgzMX0.iA12nUkP6nR8IRydMY8oGmmGn-P0HqWWZw7ML-nbawI' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    getAllContracts {\r\n        id\r\n        number\r\n        date\r\n        createdAt\r\n        updatedAt\r\n    }\r\n}","variables":{}}'

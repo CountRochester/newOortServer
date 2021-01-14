@@ -168,7 +168,7 @@ export async function setContext (app, context) {
       payload: context.payload,
       error: context.error,
       base: '/',
-      env: {"STATIC_DIR":"./static","UPLOAD_STORAGE":"/file-storage/upload","EXT_INC_FILE_STORAGE":"/file-storage/ext-inc","EXT_OUT_FILE_STORAGE":"/file-storage/ext-out","INT_INC_FILE_STORAGE":"/file-storage/int-inc","INT_OUT_FILE_STORAGE":"/file-storage/int-out","INTERNAL_FILE_STORAGE":"/file-storage/int","AVATAR_STORAGE":"/file-storage/avatars"}
+      env: {}
     }
     // Only set once
     if (!process.static && context.req) {

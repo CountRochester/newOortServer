@@ -8,6 +8,7 @@ import position from './position.js'
 import resolution from './resolution.js'
 import state from './state.js'
 import subdivision from './subdivision.js'
+import currentPosition from './current-position.js'
 
 export default (context, dbModel) => ({
   ...contract,
@@ -19,5 +20,6 @@ export default (context, dbModel) => ({
   ...position,
   ...resolution,
   ...state,
-  ...subdivision
+  ...subdivision,
+  ...currentPosition
 })

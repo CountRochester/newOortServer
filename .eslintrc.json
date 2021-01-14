@@ -35,6 +35,7 @@
     "no-underscore-dangle": "warn",
     "no-param-reassign": "warn",
     "import/no-extraneous-dependencies": "off",
-    "no-bitwise": "off"
+    "no-bitwise": "off",
+    "prefer-destructuring": ["error", {"object": true, "array": false}]
   }
 }

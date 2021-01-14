@@ -1,10 +1,11 @@
 import cluster from 'cluster'
+// import startApp from './server-app.js'
 import startApp from './server-app.js'
 import logger from './modules/core/logger.js'
 
 // import { ServerError } from './server-error.js'
 
-const INSTANCES_NUMBER = 1
+const INSTANCES_NUMBER = 2
 const WORKER_RESTART_TIMEOUT = 5000
 const CHECK_LOGS_INTERVAL = 4 * 60 * 60 * 1000
 
@@ -19,17 +20,20 @@ const killWorker = (id) => {
   }
 }
 
-const startWorker = async () => {
-  process.on('SIGINT', () => { })
-
-  process.on('message', (message) => {
-    if (message === 'exit') {
-      console.log('\x1B[32m%s\x1B[0m', `Worker pid: ${process.pid} is down`)
-      process.exit(0)
+const shutDown = (app) => {
+  app.close((err) => {
+    if (err) {
+      defaultErrorHandler(err)
     }
+    console.log('\x1B[32m%s\x1B[0m', `Worker pid: ${process.pid} is down`)
+    process.exit()
   })
+}
 
+const startWorker = async () => {
+  process.on('SIGINT', () => {})
   const app = await startApp()
+
   return app
 }
 
@@ -74,19 +78,28 @@ const errorHandler = (err) => {
   killWorker()
 }
 
+const defaultErrorHandler = (err) => {
+  logger.writeLog(err)
+  console.error(err)
+}
+
 const workerHandler = (app) => {
   process.on('message', (message) => {
     try {
-      const parsedMessage = JSON.parse(message)
-      if (parsedMessage.pubSub) {
-        const { subscription, payload } = parsedMessage.pubSub
-        console.log(`Republishing subscriptions of worker ${process.pid}`)
-        try {
-          app.context.pubsub.publish(subscription, payload, true)
-        } catch (err) {
-          logger.writeLog(err)
-          console.log(`Error publishing the subscribe on worker ${process.pid}:`)
-          console.log(err)
+      if (message === 'exit') {
+        shutDown(app)
+      } else {
+        const parsedMessage = JSON.parse(message)
+        if (parsedMessage.pubSub) {
+          const { subscription, payload } = parsedMessage.pubSub
+          console.log(`Republishing subscriptions of worker ${process.pid}`)
+          try {
+            app.context.pubsub.publish(subscription, payload, true)
+          } catch (err) {
+            logger.writeLog(err)
+            console.log(`Error publishing the subscribe on worker ${process.pid}:`)
+            console.log(err)
+          }
         }
       }
     } catch (err) {
@@ -98,11 +111,12 @@ const workerHandler = (app) => {
 }
 
 if (cluster.isMaster) {
-  // startApp(cluster.isMaster)
   let needToShutDown = false
+  let app
   logger.init()
     .then(() => (startApp(cluster.isMaster)))
-    .then(() => {
+    .then((aplication) => {
+      app = aplication
       for (let i = 0; i < INSTANCES_NUMBER; i++) {
         forkTheWorker()
       }
@@ -111,10 +125,7 @@ if (cluster.isMaster) {
     .then(() => {
       setInterval(logger.handleArchiveLogs, CHECK_LOGS_INTERVAL)
     })
-    .catch((err) => {
-      logger.writeLog(err)
-      console.error(err)
-    })
+    .catch(defaultErrorHandler)
 
   cluster.on('exit', (worker) => {
     console.log('\x1B[31m%s\x1B[0m', `Worker ${worker.process.pid} is down`)
@@ -122,14 +133,24 @@ if (cluster.isMaster) {
     const workerIds = Object.keys(cluster.workers)
 
     if (!workerIds.length && needToShutDown) {
-      console.log('\x1B[32m%s\x1B[0m', 'All workers is down')
-      console.log('\x1B[33m%s\x1B[0m', 'Goodbye...')
-      process.exit(0)
+      // eslint-disable-next-line max-nested-callbacks
+      app.close((err) => {
+        if (err) {
+          defaultErrorHandler(err)
+        }
+        console.log('\x1B[32m%s\x1B[0m', 'All workers is down')
+        console.log('\x1B[33m%s\x1B[0m', 'Goodbye...')
+        process.exit(0)
+      })
     }
   })
 
   cluster.on('online', (worker) => {
     bindRestartTheWorker(worker.id)
+  })
+
+  process.on('SIGTERM', () => {
+    console.log('jjjjd')
   })
 
   process.on('SIGINT', () => {
@@ -139,11 +160,12 @@ if (cluster.isMaster) {
     const workerIds = Object.keys(cluster.workers)
     workerIds.forEach(killWorker)
   })
+  process.on('uncaughtException', defaultErrorHandler)
+  process.on('unhandledRejection', defaultErrorHandler)
 } else {
-  try {
-    process.on('uncaughtException', errorHandler)
-    startWorker().then(workerHandler)
-  } catch (err) {
-    errorHandler(err)
-  }
+  process.on('uncaughtException', errorHandler)
+  process.on('unhandledRejection', errorHandler)
+  startWorker()
+    .then(workerHandler)
+    .catch(errorHandler)
 }

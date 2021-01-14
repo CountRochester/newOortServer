@@ -36,9 +36,10 @@ import position from './position.js'
 import resolution from './resolution.js'
 import state from './state.js'
 import subdivision from './subdivision.js'
+import currentPosition from './current-position.js'
 
 const schemas = [contract, type, tema, department, employee, organisation,
-  position, resolution, state, subdivision]
+  position, resolution, state, subdivision, currentPosition]
 const Schema = schemas.reduce((acc, schema) => acc + schema, '')
 
 export default Schema

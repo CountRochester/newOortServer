@@ -1,74 +1,88 @@
 export class ConnectionQueue {
-  constructor (maxConnections = 10, timeout = 5000) {
+  constructor (maxConnections = 10, timeout = 5000, limit = 30) {
     this.connections = new Map()
     this.maxConnections = maxConnections
     this.timeout = timeout
+    this.limit = limit
   }
 
   get size () {
     return this.connections.size
   }
 
-  addConnection ({ request, reply, done }) {
-    const key = request.id
-    const connection = {
-      request,
-      reply,
-      done,
-      timeStamp: Date.now()
+  addConnection (connection) {
+    if (this.size >= this.limit) {
+      connection.res.setHeader('Content-Type', 'text/plain')
+      connection.res.writeHead(503)
+      connection.res.end('Service Unavailable')
+      return
     }
+    const key = connection.id
+    connection.timeStamp = Date.now()
     this.connections.set(key, connection)
     console.info(`Новое соединение ${key}. Всего соединений: ${this.size}`)
     this.setTimeoutConnection(key)
+    const handleRequest = (connectionQueue) => {
+      const con = connectionQueue.connections.get(key)
+      if (con) {
+        con.done(con)
+      }
+    }
     if (this.size > this.maxConnections) {
-      setTimeout(() => {
-        done()
-      }, this.timeout)
+      setTimeout(handleRequest, this.timeout, this)
     } else {
-      done()
+      setTimeout(handleRequest, 0, this)
     }
   }
 
   getFirstConnectionInQueue () {
-    let first = Date.now()
+    let first = Infinity
     let firstKey = -1
     this.connections.forEach((connection, key) => {
       if (connection.timeStamp < first) {
         first = connection.timeStamp
-        firstKey = key
+        firstKey = connection.id
       }
     })
-    if (firstKey >= 0) {
+    if (firstKey !== -1) {
       return this.connections.get(firstKey)
     }
     return undefined
   }
 
   setTimeoutConnection (key) {
-    setTimeout(() => {
-      const connection = this.connections.get(key)
+    setTimeout((connectionQueue) => {
+      const connection = connectionQueue.connections.get(key)
       if (connection) {
-        const { reply } = connection
-        if (!reply.sent) {
-          reply.header('statusCode', 524)
-          reply.header('Content-Type', 'text/plain')
-          reply.send('Timeout')
-        }
+        const { res } = connection
+        res.setHeader('Content-Type', 'text/plain')
+        res.writeHead(524)
+        res.end('Timeout')
         this.deleteConnection(key)
         console.info(`Request id: ${key} is timed out`)
       }
-    }, this.timeout)
+    }, this.timeout, this)
   }
 
   deleteConnection (key) {
     this.connections.delete(key)
     console.info(`Соединение ${key} закрыто. Всего соединений: ${this.size}`)
-    console.info(`Соединения: ${[...this.connections.keys()]}`)
+    // console.info(`Соединения: ${[...this.connections.keys()]}`)
 
     const firstConnection = this.getFirstConnectionInQueue()
     if (firstConnection) {
-      firstConnection.done()
+      firstConnection.done(firstConnection)
     }
+  }
+
+  destroy () {
+    this.connections.forEach((connection) => {
+      const { res } = connection
+      res.setHeader('Content-Type', 'text/plain')
+      res.writeHead(521)
+      res.end('Web Server Is Down')
+      this.deleteConnection(connection.id)
+    })
   }
 }
 

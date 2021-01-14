@@ -25,6 +25,13 @@ export default `
     intPrefix: String
   }
 
+  type currentPositionSubs {
+    type: String!
+    id: ID
+    ids: [ID]
+    item: CurrentPosition
+  }
+
   type Query {
     getAllCurrentPositions: [CurrentPosition]
     getCurrentPosition(id: ID!): CurrentPosition
@@ -34,5 +41,9 @@ export default `
     addCurrentPosition(currentPosition: currentPositionInput!): Message!
     editCurrentPosition(id: ID! currentPosition: currentPositionInput!): Message!
     deleteCurrentPositions(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    currentPositionChanged: currentPositionSubs!
   }
 `
