@@ -32,35 +32,16 @@ function getRequest (args) {
   const {
     startDate, endDate, employeeId, positionId, departmentId
   } = args.currentPosition
-  let where
-  if (startDate && !endDate) {
-    where = {
-      startDate,
-      EmployeeId: employeeId,
-      PositionId: positionId,
-      DepartmentId: departmentId
-    }
-  } else if (!startDate && endDate) {
-    where = {
-      endDate,
-      EmployeeId: employeeId,
-      PositionId: positionId,
-      DepartmentId: departmentId
-    }
-  } else if (!startDate && !endDate) {
-    where = {
-      EmployeeId: employeeId,
-      PositionId: positionId,
-      DepartmentId: departmentId
-    }
-  } else {
-    where = {
-      startDate,
-      endDate,
-      EmployeeId: employeeId,
-      PositionId: positionId,
-      DepartmentId: departmentId
-    }
+  const where = {
+    EmployeeId: employeeId,
+    PositionId: positionId,
+    DepartmentId: departmentId
+  }
+  if (startDate) {
+    where.startDate = startDate
+  }
+  if (endDate) {
+    where.endDate = endDate
   }
   return where
 }
@@ -114,12 +95,6 @@ async function editCurrentPositionFun (candidate, args) {
   candidate.intPrefix = intPrefix
 }
 
-async function deleteCurrentPositions (args, serverContext) {
-  const { documentFlow: { model }, Op } = serverContext
-  const deleteOptions = { where: { EmployeeId: { [Op.in]: args.ids } } }
-  await model.CurrentPosition.destroy(deleteOptions)
-}
-
 export default {
   async addCurrentPosition (_, args, serverContext) {
     const options = {
@@ -158,8 +133,7 @@ export default {
       entity: 'CurrentPosition',
       successText: 'Должности успешно удалены',
       subscriptionTypeName: 'currentPositionChanged',
-      subscriptionKey: 'CURRENT_POSITION_CHANGED',
-      beforeDeleteFunction: deleteCurrentPositions
+      subscriptionKey: 'CURRENT_POSITION_CHANGED'
     }
     const result = await deleteEntitys(options, args, serverContext)
     return result

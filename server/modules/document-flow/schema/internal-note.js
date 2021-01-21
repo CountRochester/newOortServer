@@ -14,6 +14,13 @@ export default `
     departmentId: ID!
   }
 
+  type internalNoteSubs {
+    type: String!
+    id: ID
+    ids: [ID]
+    item: InternalNote
+  }
+
   type Query {
     getInternalNote(id: ID!): InternalNote
   }
@@ -22,5 +29,9 @@ export default `
     addInternalNote(internalNote: InternalNoteInput!): Message!
     editInternalNote(id: ID! internalNote: InternalNoteInput!): Message!
     deleteInternalNotes(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    internalNoteChanged: internalNoteSubs!
   }
 `

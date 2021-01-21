@@ -27,8 +27,15 @@ export default `
     email2: String
   }
 
+  type extEmployeeSubs {
+    type: String!
+    id: ID
+    ids: [ID]
+    item: ExtEmployee
+  }
+
   type Query {
-    getAllExtEmployee: [ExtEmployee]
+    getAllExtEmployees: [ExtEmployee]
     getExtEmployee(id: ID!): ExtEmployee
   }
 
@@ -36,5 +43,9 @@ export default `
     addExtEmployee(extEmployee: ExtEmployeeInput!): Message!
     editExtEmployee(id: ID! extEmployee: ExtEmployeeInput!): Message!
     deleteExtEmployees(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    extEmployeeChanged: extEmployeeSubs!
   }
 `

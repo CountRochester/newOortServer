@@ -14,6 +14,13 @@ export default `
     departmentId: ID!
   }
 
+  type intIncNoteSubs {
+    type: String!
+    id: ID
+    ids: [ID]
+    item: IntIncNote
+  }
+
   type Query {
     getIntIncNote(id: ID!): IntIncNote
   }
@@ -22,5 +29,9 @@ export default `
     addIntIncNote(intIncNote: IntIncNoteInput!): Message!
     editIntIncNote(id: ID! intIncNote: IntIncNoteInput!): Message!
     deleteIntIncNotes(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    intIncNoteChanged: intIncNoteSubs!
   }
 `

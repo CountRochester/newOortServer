@@ -36,23 +36,36 @@ function afterRequestEmployee (result) {
   return result.map(formEmployee)
 }
 
+export async function formExtEmployeeData (item, _, serverContext) {
+  const { id } = item
+  const { documentFlow: { model: Employee } } = serverContext
+  const request = getEmployeeRequest(serverContext)
+  const data = await Employee.findByPk(id, request)
+  return formEmployee(data)
+}
+
+function getEmployeeRequest (serverContext) {
+  const { documentFlow: { model } } = serverContext
+  const request = {
+    include: [
+      {
+        model: model.CurrentPosition,
+        attributes: ['id'],
+        include: [
+          {
+            model: model.Subdivision,
+            attributes: ['id']
+          }
+        ]
+      }
+    ]
+  }
+  return request
+}
+
 export default {
   async getAllEmployees (_, args, serverContext) {
-    const { documentFlow: { model } } = serverContext
-    const request = {
-      include: [
-        {
-          model: model.CurrentPosition,
-          attributes: ['id'],
-          include: [
-            {
-              model: model.Subdivision,
-              attributes: ['id']
-            }
-          ]
-        }
-      ]
-    }
+    const request = getEmployeeRequest(serverContext)
 
     const options = {
       check: 'isLoggedCheck',
@@ -66,32 +79,17 @@ export default {
   },
 
   async getEmployee (_, args, serverContext) {
-    const { documentFlow: { model } } = serverContext
-    const request = {
-      where: {
-        id: args.id
-      },
-      include: [
-        {
-          model: model.CurrentPosition,
-          attributes: ['id'],
-          include: [
-            {
-              model: model.Subdivision,
-              attributes: ['id']
-            }
-          ]
-        }
-      ]
-    }
+    const request = getEmployeeRequest(serverContext)
+    request.where = { id: args.id }
 
     const options = {
       check: 'isLoggedCheck',
       entity: 'Employee',
       request,
-      afterRequest: formEmployee
+      multiple: true,
+      afterRequest: afterRequestEmployee
     }
     const result = await getEntityByRequest(options, args, serverContext)
-    return result
+    return result[0]
   }
 }

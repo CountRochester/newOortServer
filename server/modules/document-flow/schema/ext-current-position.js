@@ -21,8 +21,15 @@ export default `
     organisationId: ID!
   }
 
+  type extCurrentPositionSubs {
+    type: String!
+    id: ID
+    ids: [ID]
+    item: ExtCurrentPosition
+  }
+
   type Query {
-    getAllExtCurrentPosition: [ExtCurrentPosition]
+    getAllExtCurrentPositions: [ExtCurrentPosition]
     getExtCurrentPosition(id: ID!): ExtCurrentPosition
   }
 
@@ -30,5 +37,9 @@ export default `
     addExtCurrentPosition(extCurrentPosition: ExtCurrentPositionInput!): Message!
     editExtCurrentPosition(id: ID! extCurrentPosition: ExtCurrentPositionInput!): Message!
     deleteExtCurrentPositions(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    extCurrentPositionChanged: extCurrentPositionSubs!
   }
 `

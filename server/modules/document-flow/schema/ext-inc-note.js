@@ -14,6 +14,13 @@ export default `
     departmentId: ID!
   }
 
+  type extIncNoteSubs {
+    type: String!
+    id: ID
+    ids: [ID]
+    item: ExtIncNote
+  }
+
   type Query {
     getExtIncNote(id: ID!): ExtIncNote
   }
@@ -22,5 +29,9 @@ export default `
     addExtIncNote(extIncNote: ExtIncNoteInput!): Message!
     editExtIncNote(id: ID! extIncNote: ExtIncNoteInput!): Message!
     deleteExtIncNotes(ids: [ID]!): MessageMult!
+  }
+
+  type Subscription {
+    extIncNoteChanged: extIncNoteSubs!
   }
 `
